@@ -20,23 +20,25 @@
     <meta name="keywords" content="天使爆破组,笨猪爆破组,golang,架构">
     
     <meta name="description" content="">
-    <meta name="description" content="12 33 24">
+    <meta name="description" content="题目 题意给你一个数组，里面都是不带重复的正数，再给定 target，求出所有和为 target 的组合。元素可以重复使用，但组合不能重复，比如 [2, 2, 3] 与 [2, 3, 2] 是重复的组合。 思路在图里 ×表示：当前组合和之前生成的组合重复了，比如最左边的×: 2232，与之前生成过的 2223 重复（虽然它 &gt; target 被舍弃了） △表示：当前的求和超出 target，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Go channel原理解析原理解析原理解析原理 解析原理解xxxx析原">
-<meta property="og:url" content="https://hyj443.github.io/Go-channel-%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:title" content="「手画图解」怎么分析回溯问题？| 组合总和 combination sum">
+<meta property="og:url" content="https://hyj443.github.io/leetcode_39/index.html">
 <meta property="og:site_name" content="天使爆破组">
-<meta property="og:description" content="12 33 24">
+<meta property="og:description" content="题目 题意给你一个数组，里面都是不带重复的正数，再给定 target，求出所有和为 target 的组合。元素可以重复使用，但组合不能重复，比如 [2, 2, 3] 与 [2, 3, 2] 是重复的组合。 思路在图里 ×表示：当前组合和之前生成的组合重复了，比如最左边的×: 2232，与之前生成过的 2223 重复（虽然它 &gt; target 被舍弃了） △表示：当前的求和超出 target，">
 <meta property="og:locale">
-<meta property="article:published_time" content="2021-01-09T20:42:11.000Z">
-<meta property="article:modified_time" content="2021-01-09T21:57:06.287Z">
+<meta property="og:image" content="https://pic.leetcode-cn.com/1610229936-MabxLL-image.png">
+<meta property="og:image" content="https://pic.leetcode-cn.com/1599606793-laurLe-image.png">
+<meta property="article:published_time" content="2021-01-09T20:44:11.000Z">
+<meta property="article:modified_time" content="2021-01-09T22:07:17.808Z">
 <meta property="article:author" content="天使爆破组">
-<meta property="article:tag" content="Golang">
-<meta property="article:tag" content="源码">
+<meta property="article:tag" content="LeetCode">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic.leetcode-cn.com/1610229936-MabxLL-image.png">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     
-    <title>Go channel原理解析原理解析原理解析原理 解析原理解xxxx析原 · 天使爆破组</title>
+    <title>「手画图解」怎么分析回溯问题？| 组合总和 combination sum · 天使爆破组</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -231,7 +233,7 @@
                 <a href="/" >天使爆破组的小屋</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">Go channel原理解析原理解析原理解析原理 解析原理解xxxx析原</a>
+                <a href="#" class="post-name">「手画图解」怎么分析回溯问题？| 组合总和 combination sum</a>
             </div>
     </div>
     
@@ -261,7 +263,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Go channel原理解析原理解析原理解析原理 解析原理解xxxx析原
+            「手画图解」怎么分析回溯问题？| 组合总和 combination sum
             <!-- 404 -->
             
         </h1>
@@ -280,15 +282,13 @@ height:50vh;
                 
                     <div class= post-intro-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Golang">Golang</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "源码">源码</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "LeetCode">LeetCode</a>
     
 </div>
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">3</span>阅读时长: <span class="post-count reading-time">1 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">937</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -417,9 +417,27 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <h4 id="1"><a href="#1" class="headerlink" title="1"></a>1</h4><p>2</p>
-<h4 id="3"><a href="#3" class="headerlink" title="3"></a>3</h4><p>3</p>
-<h4 id="2"><a href="#2" class="headerlink" title="2"></a>2</h4><p>4</p>
+        <h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><p><img src="https://pic.leetcode-cn.com/1610229936-MabxLL-image.png" alt="image.png"></p>
+<h4 id="题意"><a href="#题意" class="headerlink" title="题意"></a>题意</h4><p>给你一个数组，里面都是不带重复的正数，再给定 target，求出所有和为 target 的组合。<br>元素可以重复使用，但组合不能重复，比如 [2, 2, 3] 与 [2, 3, 2] 是重复的组合。</p>
+<h4 id="思路在图里"><a href="#思路在图里" class="headerlink" title="思路在图里"></a>思路在图里</h4><ul>
+<li><code>×</code>表示：当前组合和之前生成的组合重复了，比如最左边的<code>×</code>: 2232，与之前生成过的 2223 重复（虽然它 &gt; target 被舍弃了）</li>
+<li><code>△</code>表示：当前的求和超出 target，不能选下去了，返回。</li>
+<li><code>○</code>表示：求和正好等于 target，加入解集，并返回。<br><img src="https://pic.leetcode-cn.com/1599606793-laurLe-image.png" alt="image.png"></li>
+</ul>
+<h4 id="利用约束条件剪枝"><a href="#利用约束条件剪枝" class="headerlink" title="利用约束条件剪枝"></a>利用约束条件剪枝</h4><p>后两个约束条件很简单，设置递归结束条件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (sum &gt;= target) &#123;</span><br><span class="line">  <span class="keyword">if</span> (sum == target) &#123;</span><br><span class="line">    res.push(temp.slice()); <span class="comment">// 加入解集</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span>;     <span class="comment">// 结束当前递归</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不产生重复组合怎么限制（剪枝）？<br>如上图，只要限制下一次选择的起点，是基于本次的选择，这样下一次就不会选到本次选择的同层左边的数。即通过控制 for 遍历的起点，去掉会产生重复组合的选项。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i = start; i &lt; candidates.length; i++) &#123; <span class="comment">// 枚举当前可选的数，从start开始</span></span><br><span class="line">    temp.push(candidates[i]);          <span class="comment">// 选这个数</span></span><br><span class="line">    dfs(i, temp, sum + candidates[i]); <span class="comment">// 基于此，继续选择，传i，下一次就不会选到i左边的数</span></span><br><span class="line">    temp.pop();   <span class="comment">// 撤销选择，回到选择candidates[i]之前的状态，继续尝试选同层右边的数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，子递归传了 i 而不是 i+1 ，因为元素可以重复选入集合，如果传 i+1 就不重复了。</p>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight js"><figcaption><span>[]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> combinationSum = <span class="function">(<span class="params">candidates, target</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> res = [];</span><br><span class="line">  <span class="keyword">const</span> dfs = <span class="function">(<span class="params">start, temp, sum</span>) =&gt;</span> &#123; <span class="comment">// start是当前选择的起点索引 temp是当前的集合 sum是当前求和</span></span><br><span class="line">    <span class="keyword">if</span> (sum &gt;= target) &#123;</span><br><span class="line">      <span class="keyword">if</span> (sum == target) &#123;</span><br><span class="line">        res.push(temp.slice()); <span class="comment">// temp的拷贝 加入解集</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span>;   <span class="comment">// 结束当前递归</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = start; i &lt; candidates.length; i++) &#123; <span class="comment">// 枚举当前可选的数，从start开始</span></span><br><span class="line">      temp.push(candidates[i]);          <span class="comment">// 选这个数</span></span><br><span class="line">      dfs(i, temp, sum + candidates[i]); <span class="comment">// 基于此继续选择，传i，下一次就不会选到i左边的数</span></span><br><span class="line">      temp.pop();   <span class="comment">// 撤销选择，回到选择candidates[i]之前的状态，继续尝试选同层右边的数</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  dfs(<span class="number">0</span>, [], <span class="number">0</span>); <span class="comment">// 最开始可选的数是从第0项开始的，传入一个空集合，sum也为0</span></span><br><span class="line">  <span class="keyword">return</span> res;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight golang"><figcaption><span>[]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">combinationSum</span><span class="params">(candidates []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> [][]<span class="title">int</span></span> &#123;</span><br><span class="line">	res := [][]<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">	<span class="keyword">var</span> dfs <span class="function"><span class="keyword">func</span><span class="params">(start <span class="keyword">int</span>, temp []<span class="keyword">int</span>, sum <span class="keyword">int</span>)</span></span></span><br><span class="line"></span><br><span class="line">	dfs = <span class="function"><span class="keyword">func</span><span class="params">(start <span class="keyword">int</span>, temp []<span class="keyword">int</span>, sum <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> sum &gt;= target &#123;</span><br><span class="line">			<span class="keyword">if</span> sum == target &#123;</span><br><span class="line">				newTmp := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="built_in">len</span>(temp))</span><br><span class="line">				<span class="built_in">copy</span>(newTmp, temp)</span><br><span class="line">				res = <span class="built_in">append</span>(res, newTmp)</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> i := start; i &lt; <span class="built_in">len</span>(candidates); i++ &#123;</span><br><span class="line">			temp = <span class="built_in">append</span>(temp, candidates[i])</span><br><span class="line">			dfs(i, temp, sum+candidates[i])</span><br><span class="line">			temp = temp[:<span class="built_in">len</span>(temp)<span class="number">-1</span>]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	dfs(<span class="number">0</span>, []<span class="keyword">int</span>&#123;&#125;, <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="复盘总结"><a href="#复盘总结" class="headerlink" title="复盘总结"></a>复盘总结</h4><p>回溯定义：在包含问题所有解的空间树中，用DFS的方式，从根节点出发，搜索整棵解空间树。</p>
+<p>搜索至任何一个节点时，总是会先判断当前节点是否可以通往最后的合法解。如果不可以，则结束对「以当前节点为根节点的子树」的搜索，向父节点回溯，回到之前的状态，搜索下一个分支。</p>
+<p>否则，进入该子树，继续以DFS的方式搜索。</p>
+<p>空间树中的节点是动态的，即，当前有哪些选项可选择，是根据上一步的选择得出的，所以做回溯时，要把状态还原成进入当前节点之前的状态。</p>
+<p><strong>确定出问题的解空间树</strong>，它是隐式的，不是显式的一棵树。不熟练的就画图看看。</p>
+<p>然后，明确每个<strong>节点的扩展搜索规则</strong>。</p>
+<p>然后进行DFS搜索，并<strong>注意剪枝</strong>，避免无效的搜索。</p>
 
     </article>
     <!-- license  -->
@@ -429,12 +447,17 @@ height:50vh;
         <li class="next">
             
                 <div class="nextSlogan">Next Post</div>
-                <a href= "/leetcode_39/" title= "「手画图解」怎么分析回溯问题？| 组合总和 combination sum">
-                    <div class="nextTitle">「手画图解」怎么分析回溯问题？| 组合总和 combination sum</div>
+                <a href= "/%E7%BE%8E%E4%B8%BD%E6%96%B0%E4%B8%96%E7%95%8C/" title= "美丽新世界">
+                    <div class="nextTitle">美丽新世界</div>
                 </a>
             
         </li>
         <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/Go-channel-%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" title= "Go channel原理解析原理解析原理解析原理 解析原理解xxxx析原">
+                    <div class="prevTitle">Go channel原理解析原理解析原理解析原理 解析原理解xxxx析原</div>
+                </a>
             
         </li>
     </ul>
@@ -556,7 +579,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-number">1.</span> <span class="toc-text">1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-number">2.</span> <span class="toc-text">3</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-number">3.</span> <span class="toc-text">2</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E7%9B%AE"><span class="toc-number">1.</span> <span class="toc-text">题目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%98%E6%84%8F"><span class="toc-number">2.</span> <span class="toc-text">题意</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E5%9C%A8%E5%9B%BE%E9%87%8C"><span class="toc-number">3.</span> <span class="toc-text">思路在图里</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%BA%A6%E6%9D%9F%E6%9D%A1%E4%BB%B6%E5%89%AA%E6%9E%9D"><span class="toc-number">4.</span> <span class="toc-text">利用约束条件剪枝</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81"><span class="toc-number">5.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E7%9B%98%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">复盘总结</span></a></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>

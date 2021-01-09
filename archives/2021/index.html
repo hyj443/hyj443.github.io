@@ -383,6 +383,43 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/leetcode_39/" >
+            
+                <span>「手画图解」怎么分析回溯问题？| 组合总和 combination sum</span>
+        </a>
+        <div class="abstract-content">
+            题目
+题意给你一个数组，里面都是不带重复的正数，再给定 target，求出所有和为 target 的组合。元素可以重复使用，但组合不能重复，比如 [2, 2, 3] 与 [2, 3, 2] 是重复的组合。
+思路在图里
+×表示：当前组合和之前生成的组合重复了，比如最左边的×: 2232，与之前生成过的 2223 重复（虽然它 &gt; target 被舍弃了）
+△表示：当前的求和超出 target，不能选下去了，返回。
+○表示：求和正好等于 target，加入解集，并返回。
+
+利用约束条件剪枝后两个约束条件很简单，设置递归结束条件：
+123456if (sum &gt;= target) ...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/01/10</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "LeetCode">LeetCode</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/Go-channel-%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" >
             
                 <span>Go channel原理解析原理解析原理解析原理 解析原理解xxxx析原</span>
@@ -526,9 +563,16 @@
     
     
     
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        篇数 : 2
+        篇数 : 3
         </div>
         <!-- search  -->
         
@@ -552,6 +596,11 @@
             <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/%E7%BE%8E%E4%B8%BD%E6%96%B0%E4%B8%96%E7%95%8C/" >美丽新世界</a>
         </li>
     
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/leetcode_39/" >「手画图解」怎么分析回溯问题？| 组合总和 combination sum</a>
+        </li>
+    
     </div>
   </div>
         <div class="sidebar-panel-tags">
@@ -560,6 +609,8 @@
         <span class="sidebar-tag-name" data-tags="Golang"><span class="iconfont-archer">&#xe606;</span>Golang</span>
     
         <span class="sidebar-tag-name" data-tags="源码"><span class="iconfont-archer">&#xe606;</span>源码</span>
+    
+        <span class="sidebar-tag-name" data-tags="LeetCode"><span class="iconfont-archer">&#xe606;</span>LeetCode</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -595,6 +646,8 @@ jsonContent:
     <div class="sidebar-categories-name">
     
         <span class="sidebar-category-name" data-categories="Golang"><span class="iconfont-archer">&#xe60a;</span>Golang</span>
+    
+        <span class="sidebar-category-name" data-categories="LeetCode"><span class="iconfont-archer">&#xe60a;</span>LeetCode</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
