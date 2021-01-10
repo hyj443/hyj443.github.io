@@ -2594,6 +2594,17 @@ var SidebarMeta = /*#__PURE__*/function () {
     value: function _bindOtherClick() {
       var _this5 = this;
 
+        document.onkeydown = function (event) {
+            var e = event || window.event || arguments.callee.caller.arguments[0];
+            if (e && e.keyCode == 83 && flag == 1) {
+                // alert('下键');
+                _initSidebar.default.activateSidebar();
+                flag = 0;
+            } else if (e && e.keyCode == 83 && flag == 0) {
+                _initSidebar.default._inactivateSidebar();
+                flag = 1;
+            }
+        };
       document.body.addEventListener('click', function (e) {
         if (e.target.className === 'post-tag') {
           e.stopPropagation();
