@@ -2505,6 +2505,8 @@ var MetaInfo = /*#__PURE__*/function () {
   return MetaInfo;
 }();
 
+    var flag = 1
+
 var SidebarMeta = /*#__PURE__*/function () {
   function SidebarMeta(tabCount) {
     _classCallCheck(this, SidebarMeta);
