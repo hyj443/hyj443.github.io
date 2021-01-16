@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="天使爆破组">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="天使爆破组">
+    
+    <meta name="keywords" content="天使爆破组,笨猪爆破组,golang,架构">
+    
+    <meta name="description" content="">
+    <meta name="description" content="基础语法 &#x3D; 和 :&#x3D; 的区别 :&#x3D; 是定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部  &#x3D; 就是赋值，比如 var 定义变量时就可以用它给变量初始化，还有给已经定义的变量赋值   指针的作用 指针用来保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值 类型指针，可以对这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 笔试面试题题">
+<meta property="og:url" content="https://hyj443.github.io/Golang%E7%AC%94%E8%AF%95%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
+<meta property="og:site_name" content="天使爆破组">
+<meta property="og:description" content="基础语法 &#x3D; 和 :&#x3D; 的区别 :&#x3D; 是定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部  &#x3D; 就是赋值，比如 var 定义变量时就可以用它给变量初始化，还有给已经定义的变量赋值   指针的作用 指针用来保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值 类型指针，可以对这">
+<meta property="og:locale">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/ad5fbf65ly1gjr5wkuzduj20mr0ra15z.jpg">
+<meta property="article:published_time" content="2020-11-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-16T05:47:05.003Z">
+<meta property="article:author" content="天使爆破组">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva2.sinaimg.cn/large/ad5fbf65ly1gjr5wkuzduj20mr0ra15z.jpg">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>Golang 笔试面试题题 · 天使爆破组</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >天使爆破组的小屋</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Golang 笔试面试题题</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>天使爆破组的小屋</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Golang 笔试面试题题
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Golang">Golang</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">7.6k</span>阅读时长: <span class="post-count reading-time">27 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/12/01</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTA1IiBoZWlnaHQ9IjEwNSIgdmlld0JveD0iMCAwIDEwNSAxMDUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iI2NjYyI+DQogICAgPGNpcmNsZSBjeD0iMTIuNSIgY3k9IjEyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iMHMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjEyLjUiIGN5PSI1Mi41IiByPSIxMi41IiBmaWxsLW9wYWNpdHk9Ii41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjUwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjUyLjUiIGN5PSIxMi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjE1MG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCiAgICA8Y2lyY2xlIGN4PSI1Mi41IiBjeT0iNTIuNSIgcj0iMTIuNSI+DQogICAgICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwtb3BhY2l0eSINCiAgICAgICAgIGJlZ2luPSIzMDBtcyIgZHVyPSI1MDBtcyINCiAgICAgICAgIHZhbHVlcz0iMTsuMjsxIiBjYWxjTW9kZT0ibGluZWFyIg0KICAgICAgICAgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+DQogICAgPC9jaXJjbGU+DQogICAgPGNpcmNsZSBjeD0iOTIuNSIgY3k9IjEyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iNDAwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjkyLjUiIGN5PSI1Mi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjIwMG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCiAgICA8Y2lyY2xlIGN4PSIxMi41IiBjeT0iOTIuNSIgcj0iMTIuNSI+DQogICAgICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwtb3BhY2l0eSINCiAgICAgICAgIGJlZ2luPSIzNTBtcyIgZHVyPSI1MDBtcyINCiAgICAgICAgIHZhbHVlcz0iMTsuMjsxIiBjYWxjTW9kZT0ibGluZWFyIg0KICAgICAgICAgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+DQogICAgPC9jaXJjbGU+DQogICAgPGNpcmNsZSBjeD0iNTIuNSIgY3k9IjkyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iMjUwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjkyLjUiIGN5PSI5Mi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjEwMG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCjwvc3ZnPg0K" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h3 id="基础语法"><a href="# 基础语法" class="headerlink" title="基础语法"></a>基础语法</h3><ol>
+<li>= 和 := 的区别<ol>
+<li>:= 是定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部</li>
+<li> = 就是赋值，比如 var 定义变量时就可以用它给变量初始化，还有给已经定义的变量赋值</li>
+</ol>
+</li>
+<li>指针的作用<ol>
+<li>指针用来保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值</li>
+<li>类型指针，可以对这个指针指向的数据进行修改、传递数据，而无需拷贝数据</li>
+</ol>
+</li>
+<li> Go 允许多个返回值吗<ol>
+<li> go 支持多个返回值，多个返回值的最后一个经常返回函数执行中可能发生的错误</li>
+</ol>
+</li>
+<li> Go 有异常类型吗<ol>
+<li>注意，错误和异常是不同的，错误是可能出现问题的地方出现了问题，比如打开一个文件失败，意料之中的错误；异常是指不应该出现问题的地方出现问题，意料之外。</li>
+<li>go 的 error 接口类型作为错误处理的标准模式，如果函数要返回错误，则返回值类型列表中肯定包含 error 类型，error 接口有一个签名为 <code>Error() string</code> 的方法，所有实现了 error 接口的类型都可以当做一个错误类型，Error () 方法返回出错误的具体描述。我们可以用 errors.New 函数创建一个 error。也可以使用 error 接口自定义一个 Error 方法，返回自定义的错误信息。</li>
+<li>至于异常，go 没有设计像 Java 或 .NET 中的异常处理机制，虽然可以用 defer、panic、recover 模拟，但是官方不推荐，因为 go 设计者认为其他语言的异常机制被过度使用，上层逻辑需要为发生异常付出太多资源，同时，如果开发者觉得错误处理很麻烦，程序就容易在不可预知的时刻崩溃。</li>
+<li>go 希望开发者重视错误处理，正确处理每一个可能发生错误的函数</li>
+<li> go 的类型系统会在编译时捕获很多错误，但有的错误只能在运行时检查，如数组访问越界、引用空指针等，这些运行时错误就引发宕机（panic）</li>
+<li>宕机发生时，程序中断运行，并立即执行 defer 被延迟的函数，随后程序宕机，并输出日志信息，日志信息包括 panic value 和函数调用的堆栈跟踪信息，panic value 通常是某种错误信息。</li>
+<li>虽然 go 的 panic 机制类似于其他语言的异常，但 panic 的使用场景有一点不同，因为它会让程序宕机，所以一般用于严重错误，表明代码可能存在漏洞，对于大部分意料之中的错误，应使用 go 的错误机制，而不是 panic</li>
+<li> 开发者可以在程序中手动触发 panic，让开发者可以及时发现漏洞，宕机发生时，后面的代码不再执行，但在 panic () 函数前面已经运行过的 defer 语句依然会在宕机发生时执行，这个特性可以用来在宕机发生前，进行宕机信息处理</li>
+<li> recover 是内建函数，可以让进入 panic 的 goroutine 恢复过来，recover 仅在 defer 中有效，别的地方调用它会返回 nil 并且没有效果。如果当前 goroutine 陷入恐慌，调用 recover 可以捕获到 panic 的输入值，并且恢复正常的执行。</li>
+<li>通常来说，不应该对进入 panic 的程序做什么处理，但有时候想从 panic 中恢复，至少可以在程序崩溃前做一些事，其他语言，底层抛出异常，上层逻辑通过 try/catch 机制捕获异常，捕获不到就宕机，捕获到了程序可以继续运行</li>
+<li>有 panic 没 recover，程序宕机，有 panic 有 recover，程序不会宕机，执行完 defer 后，从宕机点退出当前函数后继续执行</li>
+<li>虽然 panic/recover 能模拟其他语言的异常机制，但并不建议在编写普通函数时也经常性使用这种特性。</li>
+</ol>
+</li>
+<li>什么是协程（Goroutine）<ol>
+<li> 先铺垫一个概念，线程其实不是真正运行的实体，线程只是一个执行流和其状态，真正运行驱动流程往前的是 CPU，CPU 在时钟的驱动下，根据 PC 寄存器从程序中取指令和操作数，从 RAM 中取数据，进行计算处理跳转，驱动执行流往前，CPU 并不关心处理的是线程还是协程，只要设置了 pc 寄存器，设置栈指针等，这些称为上下文， 那么 CPU 就能愉快的运行这个线程或协程了</li>
+<li> 内核线程其实就是一个栈加一堆资源，os 一会将 CPU 的时间片分给线程 a，一会给线程 b，靠 a 和 b 的栈来保存 a 和 b 的执行状态，起初并发处理不多，线程池够用，随着软件的复杂，并发量太大，线程成了稀缺资源，go 用了协程，提高线程的利用率</li>
+<li>一个协程代表一个执行流，它有需要执行的函数，有函数的入参，有当前执行流的状态和进度（对应 CPU 的 pc 寄存器和 SP 寄存器），也要有保存状态的地方，用于执行流恢复</li>
+<li>真正代表协程的是 g 结构体，每次 go func 编译成 newproc 函数，创建一个 g 结构体放入调度队列</li>
+<li>协程切换出去和恢复回来，需要保存上下文 恢复上下文</li>
+<li> linux 的调度是为 CPU 找到可运行的线程，go 的调度是为 m 找到 p 和可运行的 g，g 很轻量级，栈初始为 2kb，调度也不涉及系统调用，是用户态的线程</li>
+<li>用户代码中的协程造成的阻塞，只是会切换协程，不会阻塞进程</li>
+<li>调度器维护 g 在 m 上运行，确保所有 g 都尽可能公平使用 CPU 资源，g 是跑在 m 上的，p 是用来执行 g 的，维护了一个运行队列，存储所有需要它执行的 g，g 就是实现协程的 g 结构体，维护了栈，程序计数器，它所在 m 等信息</li>
+</ol>
+</li>
+<li>如何高效地拼接字符串<ol>
+<li> + 号拼接</li>
+<li> fmt.Sprint 返回拼接的字符串</li>
+<li> strings.Join 接受一个字符串数组，转换为一个拼接好的字符串</li>
+<li> bytes.Buffer 它是非常灵活的一个结构体，不止可以拼接字符串，还是可以 byte,rune 等，并且实现了 io.Writer 接口，写入也非常方便<ol>
+<li> var b bytes.Buffer   b.WriteString (“昵称”)   return b.String ()</li>
+</ol>
+</li>
+<li> 从 go 1.10 版本开始，增加了一个 builder 类型，用于提升字符串拼接的性能。它的使用和 buffer 几乎一样<ol>
+<li> var b strings.Builder  b.WriteString (“昵称”)  return b.String ()</li>
+</ol>
+</li>
+<li> 性能最好的是 + 号拼接、Join 拼接，最慢的是 fmt 拼接，这里的 builder 和 buffer 拼接差不多，并没有发挥出其能力</li>
+<li> + 号拼接不再具有优势，因为 string 是不可变的，每次拼接都会生成一个新的 string, 也就是会进行一次内存分配，我们现在是 10 个大小的切片，每次操作要进行 9 次进行分配，占用内存，所以每次操作时间都比较长，自然性能就低下。采用长度为 10 个切片进行测试，也很明显测试出了 Builder 要比 Buffer 性能好很多，这个问题原因主要还是 [] byte 和 string 之间的转换，Builder 恰恰解决了这个问题</li>
+<li>表现好的还是 Join 和 Builder。这两个方法的使用侧重点有些不一样， 如果有现成的数组、切片那么可以直接使用 Join, 但是如果没有，并且追求灵活性拼接，还是选择 Builder。 Join 还是定位于有现成切片、数组的（毕竟拼接成数组也要时间），并且使用固定方式进行分解的，比如逗号、空格等，局限比较大。</li>
+<li><ul>
+<li>连接适用于短小的、常量字符串（明确的，非变量），因为编译器会给我们优化。Join 是比较统一的拼接，不太灵活，fmt 和 buffer 基本上不推荐，builder 从性能和灵活性上，都是上佳的选择。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>什么是 rune 类型<ol>
+<li> ASCII 码只需要 7 bit 就可以完整地表示，但只能表示英文字母在内的 128 个字符，为了表示世界上大部分的文字系统，发明了 Unicode， 它是 ASCII 的超集，包含世界上书写系统中存在的所有字符，并为每个代码分配一个标准编号（称为 Unicode CodePoint），在 Go 语言中称之为 rune，是 int32 类型的别名。</li>
+<li> Go 语言中，字符串的底层表示是 byte (8 bit) 序列，而非 rune (32 bit) 序列。例如下面的例子中 <code>语 </code> 和 <code> 言</code> 使用 UTF-8 编码后各占 3 个 byte，因此 <code>len("Go 语言")</code> 等于 8，当然我们也可以将字符串转换为 rune 序列。</li>
+<li> 用来表示 Unicode 字符的 rune 类型和 int32 类型是等价的，通常用于表示一个 Unicode 码点。这两个名称可以互换使用。</li>
+<li> 代表一个 UTF-8 字符，当需要处理中文、日文或者其他复合字符时，则需要用到 rune 类型。</li>
+<li> Go 语言支持 Unicode（UTF-8），因此字符同样称为 Unicode 代码点或者 runes，并在内存中使用 int 来表示。在文档中，一般使用格式 U+hhhh 来表示，其中 h 表示一个 16 进制数。</li>
+<li> byte 类型是 uint8 的别名 对于只占用 1 个字节的传统 ASCII 编码的字符来说，完全没有问题，例如 var ch byte = ‘A’，字符使用单引号括起来。在 ASCII 码表中，A 的值是 65，使用 16 进制表示则为 41，所以下面的写法是等效的 var ch byte = 65 或 var ch byte = ‘\x41’   \x 总是紧跟着长度为 2 的 16 进制数 另外一种可能的写法是 \ 后面紧跟着长度为 3 的八进制数，例如 \377。</li>
+</ol>
+</li>
+<li>如何判断 map 中是否包含某个 key ？<ol>
+<li>map 内置有判断是否存在某个 key 的方式 v, ok := vMap [“key1”]</li>
+<li> 第二个返回值，如果不存在 key，那么 ok 为 false，如果存在 ok 为 true</li>
+</ol>
+</li>
+<li>Go 支持默认参数或可选参数吗<ol start="3">
+<li>不支持默认参数，明确优于隐式，避免二义</li>
+<li>语法更简单，防止特性被滥用</li>
+<li>遵从这种哲学，go 把给结构体绑定的方法，绑定的 this 都显式化了，追求显式表达</li>
+<li>别的语言 有时会遇到因为参数默认值而导致一些问题，调试很长时间也不得结果</li>
+<li> public void Demo3 (string x = “demo”, int y = 5) 这里就是两个可选参数，带了默认值</li>
+<li>但 go 不支持可选参数，但支持可变参数 func rawPrint (rawList …interface {}) {</li>
+</ol>
+</li>
+<li>defer 的执行顺序<ol>
+<li>  defer 所在的函数即将返回时，defer 所延迟处理的语句，会按 defer 声明的逆序执行，即先 defer 的语句后执行，象栈一样</li>
+<li>  类似于 java js 的 finally，一般用于释放某些已分配的资源，典型的例子就是对一个互斥解锁，或者关闭一个文件。</li>
+<li> 对于有名返回值的函数，执行 return 语句时，并不会再创建临时变量保存，因此，defer 语句修改了 i，即对返回值产生了影响</li>
+</ol>
+</li>
+<li>如何交换 2 个变量的值<ol>
+<li> 一个中间变量进行变量的临时保存</li>
+<li> b, a = a, b “多重赋值” 特性</li>
+</ol>
+</li>
+<li> Go 语言 tag 的用处<ol>
+<li> 回顾 Unmarshal 解析 json 字符串，先定义了与 json 数据对应的结构体，数组对应 slice，字段名对应 JSON 里面的 KEY</li>
+<li> 能够被赋值的字段必须是可导出字段 (即首字母大写）。同时 JSON 解析的时候只会解析能找得到的字段，找不到的字段会被忽略，这样的一个好处是：当你接收到一个很大的 JSON 数据结构而你却只想获取其中的部分数据的时候，你只需将你想要的数据对应的字段名大写，即可</li>
+<li> 通过 interface {} 与 type assert 的配合，我们就可以解析未知结构的 JSON 数</li>
+<li> func Marshal(v interface{}) ([]byte, error)</li>
+<li> 输出字段名的首字母都是大写的，如果你想用小写的首字母怎么办呢？把结构体的字段名改成首字母小写的？JSON 输出的时候必须注意，只有导出的字段才会被输出，如果修改字段名，那么就会发现什么都不会输出，所以必须通过 struct tag 定义来实现</li>
+<li> 针对 JSON 的输出，我们在定义 struct tag 的时候需要注意的几点是:</li>
+</ol>
+</li>
+<li> 如何判断 2 个字符串切片（slice) 是相等的<ol>
+<li> eflect 包中有个 DeepEqual 判断任意 x 和 y 是否相等 但是通常不推荐这么做，使用反射非常影响性能。</li>
+<li> 循环判断切片中的值是否相等 先判断切片长度，再判断每个元素是否相等 注意处理越界的情况</li>
+</ol>
+</li>
+<li>字符串打印时，% v 和 %+v 的区别<ol>
+<li> 按值的本来值输出</li>
+<li> 在 % v 基础上，对结构体字段名和值进行展开</li>
+<li> <code>%v</code> 仅打印各个字段的值，<code>%+v</code> 还会打印各个字段的名称</li>
+</ol>
+</li>
+<li> Go 语言中如何表示枚举值 (enums)<ol>
+<li> 用常量 (const) 来表示枚举值。<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    Type1 StuType = <span class="literal">iota</span></span><br><span class="line">    Type2</span><br><span class="line">    Type3</span><br><span class="line">    Type4</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li>空 struct {} 的用途<ol>
+<li> 不占用内存空间 fmt.Println (unsafe.Sizeof (struct {}{})) 计算出一个数据类型实例需要占用的字节数</li>
+<li> go 中没有 set 的实现，通常用 map 代替，但对集合来说，只需要 key 不需要 val，即使 val 是布尔值，也会多占据一个字节，假如 map 中有很多数据，就会浪费很多空间。因此将 map 作为集合使用时，值类型定义为空结构体，只作为占位符使用，不占空间</li>
+<li> 还可用于传递信号的管道，有时候管道不需要发送任何数据，只是用来通知子协程执行任务，或只是用来控制协程并发度，</li>
+<li><figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">struct</span>{})</span></span> {</span><br><span class="line">    &lt;-ch</span><br><span class="line">    fmt.Println(<span class="string">"do something"</span>)</span><br><span class="line">    <span class="built_in">close</span>(ch)</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> {</span><br><span class="line">    ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>{})</span><br><span class="line">    <span class="keyword">go</span> worker(ch)</span><br><span class="line">    ch &lt;- <span class="keyword">struct</span>{}{}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li>只包含方法的结构体，不含任何字段，其实它也可以用任何数据类型代替，但就是因为不占内存</li>
+</ol>
+</li>
+</ol>
+<h3 id="实现原理"><a href="# 实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><ol>
+<li>init () 函数是什么时候执行的<ol>
+<li>程序执行前做包的初始化 主要用途：初始化不能使用初始化表达式初始化的变量</li>
+<li>每个包可以拥有多个 init 函数 包的每个源文件也可以拥有多个 init 函数</li>
+<li>同一个包中多个 init 函数的执行顺序 go 语言没有明确的定义</li>
+<li>不同包的 init 函数按照包导入的依赖关系决定该初始化函数的执行顺序</li>
+<li> init 函数不能被其他函数调用，而是在 main 函数执行之前，自动被调用</li>
+<li>初始化导入的包 对包块中声明的变量进行计算和分配初始值 执行包中的 init 函数</li>
+<li>解析变量 &gt; init 函数 &gt; main 函数</li>
+</ol>
+</li>
+<li> Go 语言的局部变量分配在栈上还是堆上<ol>
+<li>栈可用于内存分配 栈的分配和回收速度非常快</li>
+<li>默认会将 函数内变量 c 和 x 分配在栈上，这两个变量在函数退出时就不再使用，函数结束时，保存 c 和 x 的栈内存出栈释放内存，整个分配内存的过程通过栈的分配和回收都会非常迅速。</li>
+<li>堆分配内存和栈分配内存相比，堆适合不可预知大小的内存分配。但是为此付出的代价是分配速度较慢，而且会形成内存碎片。</li>
+<li>变量逃逸（Escape Analysis）—— 自动决定变量分配方式，提高运行效率</li>
+<li>在 C/C++ 语言中，需要开发者自己学习如何进行内存分配，选用怎样的内存分配方式来适应不同的算法需求。比如，函数局部变量尽量使用栈，全局变量、结构体成员使用堆分配等</li>
+<li> Go 将这个过程整合到编译器中完成  变量逃逸分析” 编译器分析代码的特征和代码的生命周期，决定应该使用堆还是栈来进行内存分配</li>
+<li> go run -gcflags “-m -l” main.go  -gcflags 参数是编译参数。其中 -m 表示进行内存分配分析，-l 表示避免程序内联，也就是避免进行程序优化</li>
+<li>编译器觉得变量应该分配在堆和栈上的原则  返回一个局部变量的地址在 Go 语言中是绝对没有问题的；变量关联的存储在函数返回之后依然存在。</li>
+<li>在 Go 语言中，如果一个局部变量在函数返回后仍然被使用，这个变量会从 heap，而不是 stack 中分配内存。</li>
+</ol>
+</li>
+<li>2 个 interface 可以比较吗 <figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> T <span class="keyword">interface</span> {</span><br><span class="line"> f1()</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> {</span><br><span class="line">    test1()</span><br><span class="line">    test2()</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test1</span><span class="params">()</span></span> {</span><br><span class="line">    <span class="keyword">var</span> t T   生成一个 <span class="keyword">interface</span> 变量 <span class="literal">nil</span></span><br><span class="line">    <span class="keyword">var</span> i <span class="keyword">interface</span>{} = t 将 t 赋值给 i，直接将 <span class="keyword">type</span> 和 data 赋给 i，它们俩的 <span class="keyword">type</span> 相同，data 都为 <span class="literal">nil</span></span><br><span class="line">    fmt.Println(t == <span class="literal">nil</span>, i == t, i == <span class="literal">nil</span>)</span><br><span class="line">    fmt.Println(reflect.TypeOf(t), reflect.TypeOf(i))</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">()</span></span> {</span><br><span class="line">    <span class="keyword">var</span> t *T  t 本质上是一个指针 而不是<span class="keyword">interface</span></span><br><span class="line">    <span class="keyword">var</span> i <span class="keyword">interface</span>{} = t  非<span class="keyword">interface</span> 赋给 <span class="keyword">interface</span> 变量，</span><br><span class="line">    fmt.Println(t == <span class="literal">nil</span>, i == t, i == <span class="literal">nil</span>)</span><br><span class="line">    fmt.Println(reflect.TypeOf(t), reflect.TypeOf(i))</span><br><span class="line">}</span><br><span class="line"><span class="literal">true</span> <span class="literal">true</span> <span class="literal">true</span></span><br><span class="line">&lt;<span class="literal">nil</span>&gt; &lt;<span class="literal">nil</span>&gt;</span><br><span class="line"><span class="literal">true</span> <span class="literal">true</span> <span class="literal">false</span></span><br><span class="line">*main.T *main.T</span><br></pre></td></tr></tbody></table></figure>
+<ol>
+<li>interface 内部实现包含 2 个字段类型 T 和 值 V，可以使用 == 或！= 比较，但要两个都相同</li>
+<li><ol>
+<li>两个 interface 均等于 nil（此时 V 和 T 都处于 unset 状态） 2）类型 V 相同，且对应的值 V 相等。</li>
+</ol>
+</li>
+<li>interface 的零值为 nil 有两种情况生成 interface，interface 赋值给 interface 或其他对象赋值给 interface</li>
+<li>interface 赋值给 interface：直接用原变量的 type 字段生成新变量的 type 字段， 原变量的 data 赋值给新变量的 data</li>
+<li> 其他类型赋值给 interface 使用原变量的类型赋值给 interface 的 type 字段，原变量的值赋值给 interface 的 data 字段。</li>
+</ol>
+</li>
+<li>interface 的关键点<ol>
+<li>是一种类型，具有一组方法的类型 不带任何方法的 interface 叫空接口类型 如果一个类型实现了一个接口的所有方法，就说这个类型实现了该接口，所有类型都实现了空接口 go 没有显式关键字去实现接口</li>
+<li> interface 在函数的参数中，如果有多种类型实现了某个接口，这些类型的值都可以直接使用 interface 的变量存储 只要实现了对应接口的方法，go 会自动进行接口检查，并在运行时执行从其他类型到该接口的自动转换</li>
+<li>一个接口被多种类型实现时，我们想区分接口的变量究竟存储哪种类型的值，v, ok := em.(T) em 是接口类型的变量 T 是要断言的类型，v 是接口变量存储的值，ok 表示是否是断言的类型 T</li>
+<li> 空接口 如果函数的参数 v 是空接口类型，这个函数可以接收任何类型作为参数。但这并不代表 v 就是任何类型，它只是一个 interface 类型，之所以可以接收任意类型，是 go 执行时传递到函数的任意类型都会被自动转成空接口类型，至于 go 是如何转换，可以看看 interface 的实现</li>
+</ol>
+</li>
+<li> 2 个 nil 可能不相等吗<ol>
+<li>可能，</li>
+<li>指针、切片、映射、通道、函数和接口的零值则是 nil</li>
+<li>invalid operation: nil == nil (operator == not defined on nil) 对于 nil 来说是一种未定义的操作。 </li>
+<li>nil 没有默认类型  fmt.Printf (“% T”, nil)  use of untyped nil</li>
+<li> 不同类型 nil 的指针是一样的  var arr [] int  var num *int fmt.Printf (“% p\n”, arr) fmt.Printf (“% p”, num) arr 和 num 的指针都是 0x0。</li>
+<li>不同类型的 nil 是不能比较的 var m map [int] string var ptr *int fmt.Printf (m == ptr)  invalid operation: arr == ptr (mismatched types [] int and *int)</li>
+<li> 同一类型的两个 nil 值可能无法比较 因为 golang 中存在 map、slice 和函数类型是不可比较类型，它们有一个别称为不可比拟的类型，所以比较它们的 nil 亦是非法的 var s1 [] int  var s2 [] int fmt.Printf (s1 == s2)  invalid operation: s1 == s2 (slice can only be compared to nil)</li>
+<li> 能够将上述不可比较类型的空值直接与 nil 标识符进行比较  var s1 [] int fmt.Println (s1 == nil) true</li>
+<li> nil 是 map、slice、pointer、channel、func、interface 的零值</li>
+<li>一个类型的所有的值的内存布局都是一样的，nil 也不例外，nil 的大小与同类型中的非 nil 类型的大小是一样的。但是不同类型的 nil 值的大小可能不同</li>
+<li>接口是对非接口值 (例如指针，struct 等) 的封装，内部实现包含 2 个字段，类型 T 和 值 V。一个接口等于 nil，当且仅当 T 和 V 处于 unset 状态（T=nil，V is unset）。</li>
+<li>两个接口值比较时，会先比较 T，再比较 V，接口值和非接口值比较时，会先将非接口值尝试转成接口值，再比较 <figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> {</span><br><span class="line">    <span class="keyword">var</span> p *<span class="keyword">int</span> = <span class="literal">nil</span>  非接口值</span><br><span class="line">    <span class="keyword">var</span> i <span class="keyword">interface</span>{} = p 接口值变量 i  T=*<span class="keyword">int</span> V=<span class="literal">nil</span></span><br><span class="line">    fmt.Println(i == p) <span class="comment">// true 将 p 转换为接口后再比较</span></span><br><span class="line">    fmt.Println(p == <span class="literal">nil</span>) <span class="comment">// true p 和 nil 都不是接口值 直接比较值</span></span><br><span class="line">    fmt.Println(i == <span class="literal">nil</span>) <span class="comment">// false 会将 nil 转换为接口 (T=nil, V=nil) 与 i (T=*int, V=nil) 不相等</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li>简述 Go 语言 GC (垃圾回收) 的工作原理<ol>
+<li> 三色标记法 垃圾回收过程中的三种状态 灰色 对象孩子标记队列中等待 黑色 对象已经被标记 gcmarkBits 对应位为 1 – 该对象不会在本次 GC 中被回收 白色 对象未被标记，gcmarkBits 对应位为 0 – 该对象将会在本次 GC 中被清理</li>
+<li> 垃圾回收 gc GarbageCollection 自动内存管理的机制 当程序向操作系统申请的内存不再需要时，垃圾回收主动将其回收并供其他代码进行内存申请的时候复用，或将其归还给操作系统 针对内存级别资源的自动回收</li>
+<li> 通常 gc 的执行过程被划分为两个半独立的组件 赋值器 回收器 赋值器本质上是用户态的代码 因为对于垃圾回收器而言，用户态代码只是在修改对象之间的引用关系，也就是在对象图上进行操作 回收器是负责执行垃圾回收的代码</li>
+<li> 根对象 根集合 是指 gc 在标记的过程中最先检查的对象 包括全局变量（程序在编译时就能确定的 存在于整个生命周期的变量）执行栈 每个 g 都有自己的执行栈 它们包含栈上的变量和指向分配的堆内存区块的指针，寄存器，寄存器的值可能表示一个指针，参与计算的这些指针可能指向某些赋值器分配的堆内存区块</li>
+<li> 三色标记法 标记清扫的垃圾回收 白色对象（可能死亡）：未被回收器访问到的对象。在回收开始阶段，所有对象均为白色，当回收结束后，白色对象均不可达。灰色对象（波面）：已被回收器访问到的对象，但回收器需要对其中的一个或多个指针进行扫描，因为他们可能还指向白色对象。黑色对象（确定存活）：已被回收器访问到的对象，其中所有字段都已被扫描，黑色对象中任何一个指针都不可能直接指向白色对象。</li>
+<li> 最开始只有白色对象，随着开始标记，灰色出现，此时 bfs 波面开始扩大，当一个对象的所有子节点都完成扫描，就变成黑色。当整个堆遍历完成时，只剩下黑色和白色对象，这时黑色对象为可达对象，即存活，白色为不可达对象，即死亡，这个过程可以视为以灰色对象为玻面，将白色对象和黑色对象分离，</li>
+<li> 标记清除算法的一大问题是在标记期间，需要暂停程序（Stop the world，STW），标记结束之后，用户程序才可以继续执行。为了能够异步执行，减少 STW 的时间，Go 语言采用了三色标记法。</li>
+<li> <img src="https://tva2.sinaimg.cn/large/ad5fbf65ly1gjr5wkuzduj20mr0ra15z.jpg"></li>
+<li> 简单的讲，就是标记内存中那些还在使用中（即被引用了）的部分，而内存中不再使用（即未被引用）的部分，就是要回收的垃圾，需要将其回收，以供后续内存分配使用。上图中的 A、B、D 就是被引用正在使用的内存，而 C、F、E 曾经被使用过，但现在没有任何对象引用，就需要被回收掉。 Root 区域主要是程序运行到当前时刻的栈和全局数据区域，是实时正在使用到的内存，当然应该优先标记。而考虑到内存块中存放的可能是指针，所以还需要递归的进行标记，待全部标记完后，就会对未被标记的内存进行回收。</li>
+</ol>
+</li>
+<li>函数返回局部变量的指针是否安全<ol>
+<li> go 函数中可以直接返回局部变量的指针，主要是依赖 go 是运行时语言，编译器发现变量可以逃逸出去时，会在堆上分配变量而不是栈上，这样就可以返回该变量的指针了</li>
+<li> c cpp 不能返回局部变量的指针，因为函数结束时局部变量就会从栈中释放</li>
+<li> 普通情况下函数中局部变量会存储在堆栈中，但是如果这个局部变量过大的话编译器可能会选择将其存储在堆中，这样会更加有意义。还有一种情况，当编译器无法证明在函数结束后变量不被引用那么就会将变量分配到堆上。总结一句：编译器会进行逃逸分析后决定局部变量分配在栈还是堆中</li>
+</ol>
+</li>
+<li>非接口的任意类型 T () 都能够调用 *T 的方法吗？反过来呢？<ol>
+<li>一个 T 类型的值可以调用 *T 类型声明的方法 ，但是只是在这个 T 的值是可寻址的情况下，编译器在调用指针属主方法之前，会自动获取这个 T 值的地址，但不是什么 T 值都是可以寻址的，所以并非所有 T 值都能调用 *T 声明的方法<ol>
+<li>字符中的字节 不可寻址</li>
+<li> map 对象中的元素 （slice 中的元素是可寻址的，slice 的底层是数组）</li>
+<li>常量</li>
+<li>包级别的函数</li>
+</ol>
+</li>
+<li>反过来，一个 *T 类型可以调用 T 声明的方法，你可以认为对于每一个 T 类型声明的方法，编译器都自动为 *T 类型自动隐式声明一个同名和同签名的方法</li>
+</ol>
+</li>
+</ol>
+<h3 id="并发编程"><a href="# 并发编程" class="headerlink" title="并发编程"></a>并发编程</h3><ol>
+<li>无缓冲的 channel 和有缓冲的 channel 的区别<ol>
+<li>无缓冲的管道 没有缓冲队列，发送方的发送会阻塞，加入 sendq 队列，等待，直到有接收方从该管道接收数据，才被唤醒 而接收方也将阻塞，直到发送方将数据发送到该信道中为止。</li>
+<li>对于有缓冲的管道，发送方在缓存队列已满的情况下会阻塞，如果有接收方在等待，那就直接将数据拷贝给接收方，如果没有，那就将数据拷贝到缓存队列的空位上，同理，接收方在缓存队列为空的时候会阻塞，</li>
+<li>一个相当于快递员打电话叫你下楼拿快递，你必须下楼同步的完成快递的接和收</li>
+<li>一个是楼下有个快递柜，当快递柜满了，快递员才会等待，等待你出现，直接把快递交给你</li>
+</ol>
+</li>
+<li>协程泄露 (Goroutine Leak)<ol>
+<li> 协程创建后，长时间得不到释放，并且还在不断创建新的协程，最后导致内存耗尽，程序崩溃<ol>
+<li>缺少接收方，导致发送阻塞</li>
+<li>缺少发送方，导致接收阻塞</li>
+<li>死锁 两个或两个以上的协程在执行过程中，由于竞争资源或由于彼此通信而操作阻塞，也会导致协程被阻塞，不能退出</li>
+<li>无限循环  如果 HTTP 服务宕机，永远不可达，导致协程不能退出，发生泄漏</li>
+</ol>
+</li>
+<li>虽说 goroutine 很轻量，但如果起了很多 goroutine 一直不退出，不释放资源，就可能耗尽系统资源</li>
+</ol>
+</li>
+<li> Go 可以限制运行时操作系统线程的数量吗<ol>
+<li>可以使用环境变量 GOMAXPROCS 或 runtime.GOMAXPROCS (num int) 设置，</li>
+<li>GOMAXPROCS 限制的是同时执行用户代码的操作系统线程的数量，但是对于被系统调用阻塞的线程数量是没有限制的，GOMAXPROCS 的默认值等于 CPU 的逻辑核数，同一时间，一个核只能绑定一个线程，然后运行被调度的协程</li>
+<li>因此对于 CPU 密集型的任务，若该值过大，例如设置为 CPU 逻辑核数的 2 倍，会增加线程切换的开销，降低性能。对于 I/O 密集型应用，适当地调大该值，可以提高 I/O 吞吐率。</li>
+</ol>
+</li>
+</ol>
+
+    </article>
+    <!-- license  -->
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/Go-channel-%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" title= "channel 原理解析 - 读源码">
+                    <div class="nextTitle">channel 原理解析 - 读源码</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:252964824@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/hyj443" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="data:image/png;base64,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" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">基础语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">并发编程</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">归档</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">标签</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">分类</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        篇数 : 3
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2021 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/leetcode_39/" >「手画图解」怎么分析回溯问题？| 组合总和 combination sum</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/Go-channel-%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" >channel 原理解析 - 读源码</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/Golang%E7%AC%94%E8%AF%95%E9%9D%A2%E8%AF%95%E9%A2%98/" >Golang 笔试面试题题</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="LeetCode"><span class="iconfont-archer">&#xe606;</span>LeetCode</span>
+    
+        <span class="sidebar-tag-name" data-tags="Golang"><span class="iconfont-archer">&#xe606;</span>Golang</span>
+    
+        <span class="sidebar-tag-name" data-tags="源码"><span class="iconfont-archer">&#xe606;</span>源码</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="LeetCode"><span class="iconfont-archer">&#xe60a;</span>LeetCode</span>
+    
+        <span class="sidebar-category-name" data-categories="Golang"><span class="iconfont-archer">&#xe60a;</span>Golang</span>
+    
+        <span class="sidebar-category-name" data-categories="面试"><span class="iconfont-archer">&#xe60a;</span>面试</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "天使爆破组"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
