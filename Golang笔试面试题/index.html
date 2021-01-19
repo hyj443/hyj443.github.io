@@ -20,16 +20,16 @@
     <meta name="keywords" content="天使爆破组,笨猪爆破组,golang,架构">
     
     <meta name="description" content="">
-    <meta name="description" content="基础语法 &#x3D; 和 :&#x3D; 的区别 :&#x3D; 是定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部  &#x3D; 就是赋值，比如 var 定义变量时就可以用它给变量初始化，还有给已经定义的变量赋值   指针的作用 指针用来保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值 类型指针，可以对这">
+    <meta name="description" content="基础语法 &#x3D; 和 :&#x3D; 的区别 :&#x3D; 定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部  &#x3D; 是赋值，比如 var 定义变量时可以用它初始化变量，或给已经定义的变量赋值   指针的作用 保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值 类型指针，可以对这个指针指向的数据进">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Golang 笔试面试题题">
 <meta property="og:url" content="https://hyj443.github.io/Golang%E7%AC%94%E8%AF%95%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
 <meta property="og:site_name" content="天使爆破组">
-<meta property="og:description" content="基础语法 &#x3D; 和 :&#x3D; 的区别 :&#x3D; 是定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部  &#x3D; 就是赋值，比如 var 定义变量时就可以用它给变量初始化，还有给已经定义的变量赋值   指针的作用 指针用来保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值 类型指针，可以对这">
+<meta property="og:description" content="基础语法 &#x3D; 和 :&#x3D; 的区别 :&#x3D; 定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部  &#x3D; 是赋值，比如 var 定义变量时可以用它初始化变量，或给已经定义的变量赋值   指针的作用 保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值 类型指针，可以对这个指针指向的数据进">
 <meta property="og:locale">
 <meta property="og:image" content="https://tva2.sinaimg.cn/large/ad5fbf65ly1gjr5wkuzduj20mr0ra15z.jpg">
-<meta property="article:published_time" content="2020-11-30T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-01-16T05:47:05.003Z">
+<meta property="article:published_time" content="2020-01-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-16T16:59:38.583Z">
 <meta property="article:author" content="天使爆破组">
 <meta property="article:tag" content="Golang">
 <meta name="twitter:card" content="summary">
@@ -287,12 +287,12 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">7.6k</span>阅读时长: <span class="post-count reading-time">27 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">8.6k</span>阅读时长: <span class="post-count reading-time">30 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2020/12/01</span>
+                    <span class="post-intro-time">2020/01/16</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -418,12 +418,12 @@ height:50vh;
     <article class="article-entry">
         <h3 id="基础语法"><a href="# 基础语法" class="headerlink" title="基础语法"></a>基础语法</h3><ol>
 <li>= 和 := 的区别<ol>
-<li>:= 是定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部</li>
-<li> = 就是赋值，比如 var 定义变量时就可以用它给变量初始化，还有给已经定义的变量赋值</li>
+<li>:= 定义变量，同时显式地初始化，不用提供数据类型，只能用在函数内部</li>
+<li> = 是赋值，比如 var 定义变量时可以用它初始化变量，或给已经定义的变量赋值</li>
 </ol>
 </li>
 <li>指针的作用<ol>
-<li>指针用来保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值</li>
+<li>保存变量的地址。一个指针变量可以指向任何一个值的内存地址，指针占用的字节大小和所指向的值的大小无关，可以通过指针获取指针指向的值，还可以操作指针指向的变量，改变值</li>
 <li>类型指针，可以对这个指针指向的数据进行修改、传递数据，而无需拷贝数据</li>
 </ol>
 </li>
@@ -432,22 +432,21 @@ height:50vh;
 </ol>
 </li>
 <li> Go 有异常类型吗<ol>
-<li>注意，错误和异常是不同的，错误是可能出现问题的地方出现了问题，比如打开一个文件失败，意料之中的错误；异常是指不应该出现问题的地方出现问题，意料之外。</li>
+<li>错误和异常是不同的，错误是可能出现问题的地方出现了问题，比如打开一个文件失败，意料之中的错误；异常是指不应该出现问题的地方出现问题，意料之外。</li>
 <li>go 的 error 接口类型作为错误处理的标准模式，如果函数要返回错误，则返回值类型列表中肯定包含 error 类型，error 接口有一个签名为 <code>Error() string</code> 的方法，所有实现了 error 接口的类型都可以当做一个错误类型，Error () 方法返回出错误的具体描述。我们可以用 errors.New 函数创建一个 error。也可以使用 error 接口自定义一个 Error 方法，返回自定义的错误信息。</li>
-<li>至于异常，go 没有设计像 Java 或 .NET 中的异常处理机制，虽然可以用 defer、panic、recover 模拟，但是官方不推荐，因为 go 设计者认为其他语言的异常机制被过度使用，上层逻辑需要为发生异常付出太多资源，同时，如果开发者觉得错误处理很麻烦，程序就容易在不可预知的时刻崩溃。</li>
-<li>go 希望开发者重视错误处理，正确处理每一个可能发生错误的函数</li>
-<li> go 的类型系统会在编译时捕获很多错误，但有的错误只能在运行时检查，如数组访问越界、引用空指针等，这些运行时错误就引发宕机（panic）</li>
+<li>至于异常，go 没有设计像 Java 或 .NET 中的异常处理机制，虽然可以用 defer、panic、recover 模拟，但是官方不推荐，因为 go 设计者认为其他语言的异常机制被过度使用，上层逻辑需要为发生异常付出太多资源，同时，如果开发者觉得错误处理很麻烦，程序就容易在不可预知的时刻崩溃。go 希望开发者重视错误处理，正确处理每一个可能发生错误的函数</li>
+<li> go 的类型系统会在编译时捕获很多错误，但有的错误只能在运行时检查，如数组访问越界、引用空指针等，这些运行时错误会引发宕机（panic）</li>
 <li>宕机发生时，程序中断运行，并立即执行 defer 被延迟的函数，随后程序宕机，并输出日志信息，日志信息包括 panic value 和函数调用的堆栈跟踪信息，panic value 通常是某种错误信息。</li>
 <li>虽然 go 的 panic 机制类似于其他语言的异常，但 panic 的使用场景有一点不同，因为它会让程序宕机，所以一般用于严重错误，表明代码可能存在漏洞，对于大部分意料之中的错误，应使用 go 的错误机制，而不是 panic</li>
 <li> 开发者可以在程序中手动触发 panic，让开发者可以及时发现漏洞，宕机发生时，后面的代码不再执行，但在 panic () 函数前面已经运行过的 defer 语句依然会在宕机发生时执行，这个特性可以用来在宕机发生前，进行宕机信息处理</li>
 <li> recover 是内建函数，可以让进入 panic 的 goroutine 恢复过来，recover 仅在 defer 中有效，别的地方调用它会返回 nil 并且没有效果。如果当前 goroutine 陷入恐慌，调用 recover 可以捕获到 panic 的输入值，并且恢复正常的执行。</li>
-<li>通常来说，不应该对进入 panic 的程序做什么处理，但有时候想从 panic 中恢复，至少可以在程序崩溃前做一些事，其他语言，底层抛出异常，上层逻辑通过 try/catch 机制捕获异常，捕获不到就宕机，捕获到了程序可以继续运行</li>
+<li> 通常来说，不应该对进入 panic 的程序做什么处理，但有时候想从 panic 中恢复，至少可以在程序崩溃前做一些事，其他语言，底层抛出异常，上层逻辑通过 try/catch 机制捕获异常，捕获不到就宕机，捕获到了程序可以继续运行</li>
 <li>有 panic 没 recover，程序宕机，有 panic 有 recover，程序不会宕机，执行完 defer 后，从宕机点退出当前函数后继续执行</li>
 <li>虽然 panic/recover 能模拟其他语言的异常机制，但并不建议在编写普通函数时也经常性使用这种特性。</li>
 </ol>
 </li>
 <li>什么是协程（Goroutine）<ol>
-<li> 先铺垫一个概念，线程其实不是真正运行的实体，线程只是一个执行流和其状态，真正运行驱动流程往前的是 CPU，CPU 在时钟的驱动下，根据 PC 寄存器从程序中取指令和操作数，从 RAM 中取数据，进行计算处理跳转，驱动执行流往前，CPU 并不关心处理的是线程还是协程，只要设置了 pc 寄存器，设置栈指针等，这些称为上下文， 那么 CPU 就能愉快的运行这个线程或协程了</li>
+<li>线程不是真正运行的实体，线程只是一个执行流和其状态，真正运行驱动流程往前的是 CPU，CPU 在时钟的驱动下，根据 PC 寄存器从程序中取指令和操作数，从 RAM 中取数据，进行计算处理跳转，驱动执行流往前，CPU 并不关心处理的是线程还是协程，只要设置了 pc 寄存器，设置栈指针等，这些称为上下文， 那么 CPU 就能愉快的运行这个线程或协程了</li>
 <li> 内核线程其实就是一个栈加一堆资源，os 一会将 CPU 的时间片分给线程 a，一会给线程 b，靠 a 和 b 的栈来保存 a 和 b 的执行状态，起初并发处理不多，线程池够用，随着软件的复杂，并发量太大，线程成了稀缺资源，go 用了协程，提高线程的利用率</li>
 <li>一个协程代表一个执行流，它有需要执行的函数，有函数的入参，有当前执行流的状态和进度（对应 CPU 的 pc 寄存器和 SP 寄存器），也要有保存状态的地方，用于执行流恢复</li>
 <li>真正代表协程的是 g 结构体，每次 go func 编译成 newproc 函数，创建一个 g 结构体放入调度队列</li>
@@ -471,7 +470,7 @@ height:50vh;
 </li>
 <li> 性能最好的是 + 号拼接、Join 拼接，最慢的是 fmt 拼接，这里的 builder 和 buffer 拼接差不多，并没有发挥出其能力</li>
 <li> + 号拼接不再具有优势，因为 string 是不可变的，每次拼接都会生成一个新的 string, 也就是会进行一次内存分配，我们现在是 10 个大小的切片，每次操作要进行 9 次进行分配，占用内存，所以每次操作时间都比较长，自然性能就低下。采用长度为 10 个切片进行测试，也很明显测试出了 Builder 要比 Buffer 性能好很多，这个问题原因主要还是 [] byte 和 string 之间的转换，Builder 恰恰解决了这个问题</li>
-<li>表现好的还是 Join 和 Builder。这两个方法的使用侧重点有些不一样， 如果有现成的数组、切片那么可以直接使用 Join, 但是如果没有，并且追求灵活性拼接，还是选择 Builder。 Join 还是定位于有现成切片、数组的（毕竟拼接成数组也要时间），并且使用固定方式进行分解的，比如逗号、空格等，局限比较大。</li>
+<li>表现好的还是 Join 和 Builder。这两个方法的使用侧重点有些不一样， 如果有现成的数组、切片那么可以直接使用 Join, 但是如果没有，并且追求灵活性拼接，还是选择 Builder。Join 还是定位于有现成切片、数组的（毕竟拼接成数组也要时间），并且使用固定方式进行分解的，比如逗号、空格等，局限比较大。</li>
 <li><ul>
 <li>连接适用于短小的、常量字符串（明确的，非变量），因为编译器会给我们优化。Join 是比较统一的拼接，不太灵活，fmt 和 buffer 基本上不推荐，builder 从性能和灵活性上，都是上佳的选择。</li>
 </ul>
@@ -479,31 +478,29 @@ height:50vh;
 </ol>
 </li>
 <li>什么是 rune 类型<ol>
-<li> ASCII 码只需要 7 bit 就可以完整地表示，但只能表示英文字母在内的 128 个字符，为了表示世界上大部分的文字系统，发明了 Unicode， 它是 ASCII 的超集，包含世界上书写系统中存在的所有字符，并为每个代码分配一个标准编号（称为 Unicode CodePoint），在 Go 语言中称之为 rune，是 int32 类型的别名。</li>
+<li> ASCII 码只需要 7 bit 就可以完整地表示，但只能表示英文字母在内的 128 个字符，为了表示世界上大部分的文字系统，发明了 Unicode， 它是 ASCII 的超集，包含世界上书写系统中存在的所有字符，并为每个代码分配一个标准编号（Unicode CodePoint），在 Go 语言中称之为 rune，是 int32 类型的别名。</li>
 <li> Go 语言中，字符串的底层表示是 byte (8 bit) 序列，而非 rune (32 bit) 序列。例如下面的例子中 <code>语 </code> 和 <code> 言</code> 使用 UTF-8 编码后各占 3 个 byte，因此 <code>len("Go 语言")</code> 等于 8，当然我们也可以将字符串转换为 rune 序列。</li>
-<li> 用来表示 Unicode 字符的 rune 类型和 int32 类型是等价的，通常用于表示一个 Unicode 码点。这两个名称可以互换使用。</li>
-<li> 代表一个 UTF-8 字符，当需要处理中文、日文或者其他复合字符时，则需要用到 rune 类型。</li>
-<li> Go 语言支持 Unicode（UTF-8），因此字符同样称为 Unicode 代码点或者 runes，并在内存中使用 int 来表示。在文档中，一般使用格式 U+hhhh 来表示，其中 h 表示一个 16 进制数。</li>
+<li> 用来表示 Unicode 字符的 rune 类型和 int32 类型是等价的，通常用于表示一个 Unicode 码点。</li>
+<li>Go 语言支持 Unicode（UTF-8），因此字符同样称为 Unicode 代码点或者 runes，并在内存中使用 int 来表示。在文档中，一般使用格式 U+hhhh 来表示，其中 h 表示一个 16 进制数。</li>
 <li> byte 类型是 uint8 的别名 对于只占用 1 个字节的传统 ASCII 编码的字符来说，完全没有问题，例如 var ch byte = ‘A’，字符使用单引号括起来。在 ASCII 码表中，A 的值是 65，使用 16 进制表示则为 41，所以下面的写法是等效的 var ch byte = 65 或 var ch byte = ‘\x41’   \x 总是紧跟着长度为 2 的 16 进制数 另外一种可能的写法是 \ 后面紧跟着长度为 3 的八进制数，例如 \377。</li>
+<li> [] byte 和 [] rune 类型的值可以被显式地直接转换成字符串，反之亦然。</li>
 </ol>
 </li>
 <li>如何判断 map 中是否包含某个 key ？<ol>
-<li>map 内置有判断是否存在某个 key 的方式 v, ok := vMap [“key1”]</li>
-<li> 第二个返回值，如果不存在 key，那么 ok 为 false，如果存在 ok 为 true</li>
+<li>map 内置有判断是否存在某个 key 的方式 v, ok := vMap [“key1”]，如果不存在 key，ok 为 false，如果存在 ok 为 true</li>
 </ol>
 </li>
-<li>Go 支持默认参数或可选参数吗<ol start="3">
+<li>Go 支持默认参数或可选参数吗<ol start="2">
 <li>不支持默认参数，明确优于隐式，避免二义</li>
-<li>语法更简单，防止特性被滥用</li>
-<li>遵从这种哲学，go 把给结构体绑定的方法，绑定的 this 都显式化了，追求显式表达</li>
+<li>语法更简单，防止特性被滥用，遵从这种哲学，go 把给结构体绑定的方法，绑定的 this 都显式化了，追求显式表达</li>
 <li>别的语言 有时会遇到因为参数默认值而导致一些问题，调试很长时间也不得结果</li>
 <li> public void Demo3 (string x = “demo”, int y = 5) 这里就是两个可选参数，带了默认值</li>
 <li>但 go 不支持可选参数，但支持可变参数 func rawPrint (rawList …interface {}) {</li>
 </ol>
 </li>
 <li>defer 的执行顺序<ol>
-<li>  defer 所在的函数即将返回时，defer 所延迟处理的语句，会按 defer 声明的逆序执行，即先 defer 的语句后执行，象栈一样</li>
-<li>  类似于 java js 的 finally，一般用于释放某些已分配的资源，典型的例子就是对一个互斥解锁，或者关闭一个文件。</li>
+<li>  defer 所在的函数即将返回时，defer 所延迟处理的语句，会按 defer 声明的逆序执行，即先 defer 的语句后执行</li>
+<li>  类似于 java 的 finally，一般用于释放某些已分配的资源，典型的例子就是对一个互斥解锁，或者关闭一个文件。</li>
 <li> 对于有名返回值的函数，执行 return 语句时，并不会再创建临时变量保存，因此，defer 语句修改了 i，即对返回值产生了影响</li>
 </ol>
 </li>
@@ -514,7 +511,7 @@ height:50vh;
 </li>
 <li> Go 语言 tag 的用处<ol>
 <li> 回顾 Unmarshal 解析 json 字符串，先定义了与 json 数据对应的结构体，数组对应 slice，字段名对应 JSON 里面的 KEY</li>
-<li> 能够被赋值的字段必须是可导出字段 (即首字母大写）。同时 JSON 解析的时候只会解析能找得到的字段，找不到的字段会被忽略，这样的一个好处是：当你接收到一个很大的 JSON 数据结构而你却只想获取其中的部分数据的时候，你只需将你想要的数据对应的字段名大写，即可</li>
+<li> 能够被赋值的字段必须是可导出字段 (首字母大写)。同时 JSON 解析的时候只会解析能找得到的字段，找不到的字段会被忽略，好处是：可以只获取其中的部分数据，只需将想要的数据对应的字段名大写</li>
 <li> 通过 interface {} 与 type assert 的配合，我们就可以解析未知结构的 JSON 数</li>
 <li> func Marshal(v interface{}) ([]byte, error)</li>
 <li> 输出字段名的首字母都是大写的，如果你想用小写的首字母怎么办呢？把结构体的字段名改成首字母小写的？JSON 输出的时候必须注意，只有导出的字段才会被输出，如果修改字段名，那么就会发现什么都不会输出，所以必须通过 struct tag 定义来实现</li>
@@ -542,6 +539,13 @@ height:50vh;
 <li> 还可用于传递信号的管道，有时候管道不需要发送任何数据，只是用来通知子协程执行任务，或只是用来控制协程并发度，</li>
 <li><figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(ch <span class="keyword">chan</span> <span class="keyword">struct</span>{})</span></span> {</span><br><span class="line">    &lt;-ch</span><br><span class="line">    fmt.Println(<span class="string">"do something"</span>)</span><br><span class="line">    <span class="built_in">close</span>(ch)</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> {</span><br><span class="line">    ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>{})</span><br><span class="line">    <span class="keyword">go</span> worker(ch)</span><br><span class="line">    ch &lt;- <span class="keyword">struct</span>{}{}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
 <li>只包含方法的结构体，不含任何字段，其实它也可以用任何数据类型代替，但就是因为不占内存</li>
+</ol>
+</li>
+<li>在 go 里如何声明不可变量<ol>
+<li>有名常量 就满足 没有地址的值，所以它不可寻址，不可变</li>
+<li>方法和声明的函数，可以视为声明的不可变值，有地址但是因为种种原因在语法上不可以寻址</li>
+<li>字符串的字节元素同样也是有地址但不可寻址的值</li>
+<li>可寻址，但不允许在语法上被修改的值，这种还不存在</li>
 </ol>
 </li>
 </ol>
@@ -615,9 +619,9 @@ height:50vh;
 </ol>
 </li>
 <li>函数返回局部变量的指针是否安全<ol>
-<li> go 函数中可以直接返回局部变量的指针，主要是依赖 go 是运行时语言，编译器发现变量可以逃逸出去时，会在堆上分配变量而不是栈上，这样就可以返回该变量的指针了</li>
+<li> go 函数中可以直接返回局部变量的指针，go 是运行时语言，编译器会对每个局部变量进行逃逸分析，如果一个值可以在编译时被断定它在运行时刻只会在一个协程中使用，则此值将被开辟在此协程的栈上，否则将此值开辟在堆上</li>
 <li> c cpp 不能返回局部变量的指针，因为函数结束时局部变量就会从栈中释放</li>
-<li> 普通情况下函数中局部变量会存储在堆栈中，但是如果这个局部变量过大的话编译器可能会选择将其存储在堆中，这样会更加有意义。还有一种情况，当编译器无法证明在函数结束后变量不被引用那么就会将变量分配到堆上。总结一句：编译器会进行逃逸分析后决定局部变量分配在栈还是堆中</li>
+<li>普通情况下函数中局部变量会存储在堆栈中，但是如果这个局部变量过大的话编译器可能会选择将其存储在堆中，这样会更加有意义。还有一种情况，当编译器无法证明在函数结束后变量不被引用那么就会将变量分配到堆上。总结一句：编译器会进行逃逸分析后决定局部变量分配在栈还是堆中</li>
 </ol>
 </li>
 <li>非接口的任意类型 T () 都能够调用 *T 的方法吗？反过来呢？<ol>
@@ -629,6 +633,20 @@ height:50vh;
 </ol>
 </li>
 <li>反过来，一个 *T 类型可以调用 T 声明的方法，你可以认为对于每一个 T 类型声明的方法，编译器都自动为 *T 类型自动隐式声明一个同名和同签名的方法</li>
+<li> *T 的方法集总是 T 方法集的超集，反之不然</li>
+</ol>
+</li>
+<li>哪些值可以被取地址，哪些不可被取地址<ol>
+<li> 字符串的字节元素 映射元素，接口值的动态值（类型断言的结果） 常量，声明的包级别函数，方法，中间结果值</li>
+<li> 可寻址的，变量，可寻址的结构体的字段，可寻址的数组的元素，任意切片的元素（无论是可寻址切片还是不可寻址切片），指针解引用操作</li>
+</ol>
+</li>
+<li>为什么非空切片的元素总是可被取地址，即便对于不可寻址的切片也是如此</li>
+<li>  elements unsafe.Pointer// 引用着一个元素序列 length   int capacity int 切片的内部类型是一个结构体，类似于</li>
+<li>  每一个切片间接引用一个元素序列。 尽管一个非空切片是不可取地址的，它的内部元素序列需要开辟在内存中的某处因而必须是可取地址的。 取一个切片的元素地址事实上是取内部元素序列上的元素地址。 因此，不可寻址的非空切片的元素也是可以被取地址的。</li>
+<li>为什么 map 元素不能被取地址<ol>
+<li> 映射的设计保证了映射值在内存允许的情况下，可以加入任意多条目，另外防止一个映射中为其条目开辟的内存支离破碎，使用了哈希表来实现映射，并为了保证元素索引的效率，一个映射值的底层哈希表只为其中的所有条目维护一段连续的内存段，因此一个映射值随着其中条目数量的增加，其维护的连续内存段需要不断重新开辟来增容，并把原来内存段上的条目复制到新开辟的内存段上，另外，即使一个映射值维护的内存段没有增容，某些哈希表实现 也可能在当前内存段中移动其中的条目，总之，映射中的元素的地址会因为各种原因而改变，如果映射元素可以被取地址，go 运行时必须在元素地址改变时，修改所有存储了元素地址的指针值，这极大增加了 go 编译器和运行时的实现难度，严重影响了运行效率，目前 go 禁止取映射元素的地址，</li>
+<li> 映射元素不可被取地址，还有一个原因，aMap [key] 可能返回一个存储于 aMap 中的元素，也可能返回一个不存储于其中的元素零值。 这意味着表达式 aMap [key] 在 (&amp;aMap [key]).Modify () 调用执行之后可能仍然被估值为元素零值。 这将使很多人感到困惑，因此在 Go 中禁止取映射元素的地址。</li>
 </ol>
 </li>
 </ol>
@@ -655,6 +673,10 @@ height:50vh;
 <li>可以使用环境变量 GOMAXPROCS 或 runtime.GOMAXPROCS (num int) 设置，</li>
 <li>GOMAXPROCS 限制的是同时执行用户代码的操作系统线程的数量，但是对于被系统调用阻塞的线程数量是没有限制的，GOMAXPROCS 的默认值等于 CPU 的逻辑核数，同一时间，一个核只能绑定一个线程，然后运行被调度的协程</li>
 <li>因此对于 CPU 密集型的任务，若该值过大，例如设置为 CPU 逻辑核数的 2 倍，会增加线程切换的开销，降低性能。对于 I/O 密集型应用，适当地调大该值，可以提高 I/O 吞吐率。</li>
+</ol>
+</li>
+<li>为什么没有一个内置函数来检查管道是否已关闭<ol>
+<li>实用性有限，它并不能总是反映管道的最新状态，当函数调用结果返回时，被检查的管道的状态有可能又改变了。虽然我们可以根据调用 closed (ch) 的返回结果为 true 而得出我们不应该再向通道 ch 发送数据的结论， 但是我们不能根据一个调用 closed (ch) 的返回结果为 false 而得出我们可以继续向通道 ch 发送数据的结论。</li>
 </ol>
 </li>
 </ol>
@@ -869,7 +891,7 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/Golang%E7%AC%94%E8%AF%95%E9%9D%A2%E8%AF%95%E9%A2%98/" >Golang 笔试面试题题</a>
+            <span class="archive-post-date">01/16</span><a class="archive-post-title" href= "/Golang%E7%AC%94%E8%AF%95%E9%9D%A2%E8%AF%95%E9%A2%98/" >Golang 笔试面试题题</a>
         </li>
     
     </div>
