@@ -28,7 +28,7 @@
 <meta property="og:description" content="数组没那么常用，切片更常用，切片的长度不是固定的，可以向切片中追加元素，它会在余量不足时自动扩容。 cmd\compile\internal\types\type.go 中的 NewSlice 函数是在编译期间用于创建切片类型 1234567891011121314&#x2F;&#x2F; NewSlice returns the slice Type with element type elem.func NewS">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-03-27T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-03-30T15:19:48.827Z">
+<meta property="article:modified_time" content="2021-03-30T16:21:21.810Z">
 <meta property="article:author" content="天通苑废物">
 <meta property="article:tag" content="Golang">
 <meta property="article:tag" content="源码">
@@ -288,7 +288,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">7.4k</span>阅读时长: <span class="post-count reading-time">30 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">4.3k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -570,77 +570,6 @@ return n</code></pre>
 <p>图 3-5 Go 语言切片的拷贝</p>
 <p>相比于依次拷贝元素，runtime.memmove 能够提供更好的性能。需要注意的是，整块拷贝内存仍然会占用非常多的资源，在大切片上执行拷贝操作时一定要注意对性能的影响。</p>
 <p>3.2.6 小结 #<br>切片的很多功能都是由运行时实现的，无论是初始化切片，还是对切片进行追加或扩容都需要运行时的支持，需要注意的是在遇到大切片扩容或者复制时可能会发生大规模的内存拷贝，一定要减少类似操作避免影响程序的性能。</p>
-<p>问题 1，SliceHeader 结构体的 data 字段是一个 uintptr 字段，为什么不用 unsafe Pointer 呢？ 记得 gc 时会改变对象的指针，如果用 uintptr，难道不会在某个 gc 时间过后，slice 变得不可用吗？<br>SliceHeader 的结构体有两个版本，这一节中展示的是 reflect 包中的 reflect.SliceHeader 结构体</p>
-<p>// Moreover, the Data field is not sufficient to guarantee the data<br>// it references will not be garbage collected, so programs must keep<br>// a separate, correctly typed pointer to the underlying data.<br>type SliceHeader struct {<br>    Data uintptr<br>    Len  int<br>    Cap  int<br>}<br>注释中解释了，程序需要为底层数据维护一个独立的、类型正确的指针。internal/reflectlite 包中的 internal/reflectlite.sliceHeader 就是一个安全版本的切片头</p>
-<p>// sliceHeader is a safe version of SliceHeader used within this package.<br>type sliceHeader struct {<br>    Data unsafe.Pointer<br>    Len  int<br>    Cap  int<br>}</p>
-<p>问题 2：切片扩容 25% 后还可能会做这一步操作 <br>capmem = roundupsize(capmem)<br>newcap = int(capmem / et.size)<br> 所以实际扩容量可能不是 25%</p>
-<p>你这么说也确实没问题</p>
-<p>问题 3<br>关于下标初始化那部分，建议参考官方文档的写法，标注下这种方式并不会产生 copy<br>2020-10-18 UPDATES: 标注下标方式初始化切片不会发生拷贝</p>
-<p>问题 4<br>文中解说 copy 部分提及到虽然使用了 memove，但是在大 slice 中使用 copy 会同样非常耗费资源，然后文中说到的扩容部分，最终其实也是使用了 memove。那么假设一个需求，要用一个 slice 接收一个未知长度的字节流，但这个字节流一定不会大于可分配内存，在极端情况下，会不会出现性能越来越差，因为性能可能全部都耗费在复制数据和开辟新空间了</p>
-<p>确实有可能，不过可变长度的数组基本都是这么实现的，不同语言也没有太多的区别，这种问题其实只有在真实场景中才有意义。</p>
-<p>感谢回复，其实有点抬杠，理论上在实际开发中，应该在通讯协议中就已经定义好了数据长度或者每帧所带的数据长度，有了这个数据，直接一次性开辟相应的空间就好了</p>
-<p>可以看下这一篇 <a target="_blank" rel="noopener" href="https://juejin.im/post/5ca4239ef265da30807fea48">https://juejin.im/post/5ca4239ef265da30807fea48</a> 解释得很清楚</p>
-<p>@bluemiaomiao<br>bluemiaomiao 发表于 9 个月前 <br>@LeeChiChuang<br> 是否覆盖原变量的逻辑其实差不多，最大的区别在于最后的结果是不是赋值会原有的变量，如果我们选择覆盖原有的变量，也不需要担心切片的拷贝，因为 Go 语言的编译器已经对这种情况作了优化。</p>
-<p>最后的结果是不是赋值会原有的变量 大佬，这句话感觉有语病</p>
-<p>我的理解是，切片的追加操作 append 会根据源代码的编写分为两种实现逻辑：</p>
-<p>在源代码文件中不赋值给原来的切片变量：append (slice, 1, 2, 3) 判断是否需要扩容（创建一个新数组，将原来的元素拷贝过去，由 runtime.growslice 完成），完成后写入新数据。<br>在源代码文件中赋值给原来的切片变量：slice = append (slice, 1, 2, 3)，实现逻辑差不多与不覆盖原来变量情况相同，区别在于内部函数的变量操作，由于是覆盖原来的变量，而不是赋值给新的切片空间，Go 编译器会对此进行优化，不会产生数据拷贝。</p>
-<p>赞，有预估的 cap 时，最后的扩容大小可能还与元素的类型有关。</p>
-<p>发现一个坑，go slice 如果只基于 cap 够不够去判断要不要申请一个新数组的话，<br>第四行 a 的 len=4，cap=8，看起来是容量够用的，会直接在底层数组往后追加，而 b 和 a 指向的是同一个底层数组，b append 的值就会被覆盖。</p>
-<p>最终输出：4</p>
-<p>func main() {<br>    a := make([]int, 4, 8)<br>    b := append(a, 3, 3, 3)<br>    a = append(a, 4, 4, 4)<br>    println(b[4])<br>}</p>
-<p>@draveness<br>draveness 发表于 7 个月前<br>SliceHeader 里为什么不用关心 ElemSize</p>
-<p>因为这些信息在运行期间就够了，访问和覆盖的指令都会在编译期间处理好</p>
-<p>@todorex<br>todorex 发表于 6 个月前<br>@bluemiaomiao</p>
-<p>@LeeChiChuang<br>是否覆盖原变量的逻辑其实差不多，最大的区别在于最后的结果是不是赋值会原有的变量，如果我们选择覆盖原有的变量，也不需要担心切片的拷贝，因为 Go 语言的编译器已经对这种情况作了优化。</p>
-<p>最后的结果是不是赋值会原有的变量 大佬，这句话感觉有语病</p>
-<p>我的理解是，切片的追加操作 append 会根据源代码的编写分为两种实现逻辑：</p>
-<p>在源代码文件中不赋值给原来的切片变量：append (slice, 1, 2, 3) 判断是否需要扩容（创建一个新数组，将原来的元素拷贝过去，由 runtime.growslice 完成），完成后写入新数据。<br>在源代码文件中赋值给原来的切片变量：slice = append (slice, 1, 2, 3)，实现逻辑差不多与不覆盖原来变量情况相同，区别在于内部函数的变量操作，由于是覆盖原来的变量，而不是赋值给新的切片空间，Go 编译器会对此进行优化，不会产生数据拷贝。<br>这一块我也不太理解，直接 append，不带返回值编译会直接报错，这个意义何在？</p>
-<p>@draveness<br>draveness 发表于 6 个月前 <br> 这一块我也不太理解，直接 append，不带返回值编译会直接报错，这个意义何在？</p>
-<p>不带返回值编译是什么意思，可以给出具体例子么</p>
-<p>@todorex<br>todorex 发表于 6 个月前<br>@draveness</p>
-<p>这一块我也不太理解，直接 append，不带返回值编译会直接报错，这个意义何在？</p>
-<p>不带返回值编译是什么意思，可以给出具体例子么</p>
-<pre><code>var b []int64
-append(b, 1)
-fmt.Println(b)</code></pre>
-<p>这种是编译不了的，我没太理解不带回返回值的 append 是什么时候使用的？</p>
-<p>@draveness<br>draveness 发表于 6 个月前<br>@draveness</p>
-<p>这一块我也不太理解，直接 append，不带返回值编译会直接报错，这个意义何在？</p>
-<p>不带返回值编译是什么意思，可以给出具体例子么</p>
-<pre><code>var b []int64
-append(b, 1)
-fmt.Println(b)</code></pre>
-<p>这种是编译不了的，我没太理解不带回返回值的 append 是什么时候使用的？</p>
-<p>昂，@bluemiaomiao 说的不赋值是不是不覆盖原有变量，这种确实没法编译</p>
-<p>@golandscape<br>golandscape 发表于 6 个月前 <br> 现实是，后半部分还对 newcap 作了一个内存对齐，这个和内存分配策略相关。进行内存对齐之后，新 slice 的容量是要 大于等于 老 slice 容量的 2 倍或者 1.25 倍</p>
-<p>func growslice(et *_type, old slice, cap int) slice {<br>    // ……<br>    newcap := old.cap<br>    doublecap := newcap + newcap<br>    if cap &gt; doublecap {<br>        newcap = cap<br>    } else {<br>        if old.len &lt; 1024 {<br>            newcap = doublecap<br>        } else {<br>            for newcap &lt; cap {<br>                newcap += newcap / 4<br>            }<br>        }<br>    }<br>    // ……<br>    capmem = roundupsize(uintptr(newcap) * ptrSize)<br>    newcap = int(capmem / ptrSize)<br>}<br>@shuanzia<br>shuanzia 发表于 6 个月前 <br> 有个字错了，但也不影响阅读哈。</p>
-<p>『切片中的数组就会发生变化，不过在上层看来切片时没有变化的』</p>
-<p>时 -&gt; 是</p>
-<p>『最大的区别在于最后的结果是不是赋值会原有的变量』</p>
-<p>会 -&gt; 回</p>
-<p>2020-09-30 UPDATES: 已修复</p>
-<p>@CyanChan<br>CyanChan 发表于 4 个月前 <br> 有个问题：<br>当一个切片扩容的时候，比如当前地址是 0 到 5，扩容会扩容到地址为 0 -10。当如果扩容时 5-10 的内存地址被占用了，是否会开辟一个新的内存空间开辟过去，这时候指针就会改变就会覆盖文章中所说的原变量了吧。<br>请问什么时候会触发这个？分配到哪个新内存空间的操作是运行时编译器去做，还是操作系统去做的呀？ 感谢大佬写的好文章</p>
-<p>@draveness<br>draveness 发表于 4 个月前 <br>@CyanChan<br> 有个问题：<br>当一个切片扩容的时候，比如当前地址是 0 到 5，扩容会扩容到地址为 0 -10。当如果扩容时 5-10 的内存地址被占用了，是否会开辟一个新的内存空间开辟过去，这时候指针就会改变就会覆盖文章中所说的原变量了吧。<br>请问什么时候会触发这个？</p>
-<p>扩容的时候会直接申请新的切片</p>
-<p>分配到哪个新内存空间的操作是运行时编译器去做，还是操作系统去做的呀？ 感谢大佬写的好文章</p>
-<p>Go 语言会向操作系统申请内存，但是具体分配是由 Go 语言运行时决定的，跟编译器无关，具体可以看内存分配器一节</p>
-<p>@philchia<br>philchia 发表于 3 个月前<br>gc 并不会挪动指针，只有栈上指针在栈扩容的时候会被挪动吧</p>
-<p>@konkona<br>请教一个问题，SliceHeader 结构体的 data 字段是一个 uintptr 字段，为什么不用 unsafe Pointer 呢？ 记得 gc 时会改变对象的指针，如果用 uintptr，难道不会在某个 gc 时间过后，slice 变得不可用吗？这问题困扰我有点久了，望打住解答～感谢！</p>
-<p>@Imfan<br>Imfan 发表于 3 个月前<br>@draveness</p>
-<p>请教一个问题，SliceHeader 结构体的 data 字段是一个 uintptr 字段，为什么不用 unsafe Pointer 呢？ 记得 gc 时会改变对象的指针，如果用 uintptr，难道不会在某个 gc 时间过后，slice 变得不可用吗？这问题困扰我有点久了，望打住解答～感谢！</p>
-<p>这个问题非常好，SliceHeader 的结构体有两个版本，这一节中展示的是 reflect 包中的 reflect.SliceHeader 结构体</p>
-<p>// Moreover, the Data field is not sufficient to guarantee the data<br>// it references will not be garbage collected, so programs must keep<br>// a separate, correctly typed pointer to the underlying data.<br>type SliceHeader struct {<br>    Data uintptr<br>    Len  int<br>    Cap  int<br>}<br>注释中解释了，程序需要为底层数据维护一个独立的、类型正确的指针。internal/reflectlite 包中的 internal/reflectlite.sliceHeader 就是一个安全版本的切片头</p>
-<p>// sliceHeader is a safe version of SliceHeader used within this package.<br>type sliceHeader struct {<br>    Data unsafe.Pointer<br>    Len  int<br>    Cap  int<br>}<br>大神 <br>gc 会改变指针吗，那数据岂不是会乱<br> 为什么改为 unsafe.Pointer 就是安全的版本了呢</p>
-<p>@zLuffyjiang<br>zLuffyjiang 发表于 3 个月前<br>「如果我们选择覆盖原有的变量，就不需要担心切片发生拷贝影响性能，因为 Go 语言编译器已经对这种常见的情况做出了优化」我理解这里拷贝的只是切片的 cap、len 和指针吧，应该不会影响性能吧</p>
-<p>@yanjinbin<br>yanjinbin 发表于 3 个月前<br>append 扩容为何如此设计？go 的提交历史里面好像也没有找到 proposal 哎，博主晓得不</p>
-<p>@ivalue2333<br>ivalue2333 发表于 12 天前 <br> 您好，在考虑扩容带来的内存拷贝的情况，append 操作的时间复杂度是否是 O (n)， 线性时间复杂度。<br>因为例如，我要从没有元素到 append 1024 个元素，那么假设我都是一倍扩容的情况，我需要进行的操作就是 512 次值拷贝， 256 次值拷贝，依次类推。所以最终，我的 append 操作是一个常数时间复杂度。</p>
-<p>请教下，请问我的结论和我的推理是否正确。</p>
-<p>@draveness<br>draveness 发表于 7 天前 <br> 您好，在考虑扩容带来的内存拷贝的情况，append 操作的时间复杂度是否是 O (n)， 线性时间复杂度。<br>因为例如，我要从没有元素到 append 1024 个元素，那么假设我都是一倍扩容的情况，我需要进行的操作就是 512 次值拷贝， 256 次值拷贝，依次类推。所以最终，我的 append 操作是一个常数时间复杂度。</p>
-<p>请教下，请问我的结论和我的推理是否正确。</p>
-<p>最差情况下确实是这样的，但是你应该在 make 的时候确定 capacity</p>
-<p>@keroro6<br>keroro6 发表于大约 20 小时前<br>@draveness</p>
-<p>还是不太明白，slice 什么时候用 uintptr，什么时候用 unsafe.Pointer，这篇文章中，为什么给出 uintptr 版本的结构体，求解答，谢谢</p>
-<p>@zhangzhitong0114<br>zhangzhitong0114 发表于大约 20 小时前<br>slice.go 中的 growslice 函数中的 cap 参数的值是和 old.cap 一样吗？如果不一样其值是什么，从哪里赋值的</p>
 
     </article>
     <!-- license  -->
