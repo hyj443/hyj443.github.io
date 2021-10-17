@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="天通苑废物">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="天通苑废物">
+    
+    <meta name="keywords" content="golang,架构">
+    
+    <meta name="description" content="">
+    <meta name="description" content="字符串是 go 语言的基础数据类型，字符串实际上是一片连续的内存空间，我们也可以将它理解成一个由字符组成的数组。 字符串是由字符组成的数组，数组会占用一片连续的内存空间，而内存空间存储的字节共同组成了字符串，go 语言中的字符串只是一个只读的字节数组。 如果是代码中存在字符串，编译器会将其标记成只读数据 SRODATA，以下代码，包含了一个字符串，当被编译成汇编语言时，就能看到 hello 字符串">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go 字符串源码分析">
+<meta property="og:url" content="https://hyj443.github.io/go%E5%AD%97%E7%AC%A6%E4%B8%B2/index.html">
+<meta property="og:site_name" content="逃离天通苑">
+<meta property="og:description" content="字符串是 go 语言的基础数据类型，字符串实际上是一片连续的内存空间，我们也可以将它理解成一个由字符组成的数组。 字符串是由字符组成的数组，数组会占用一片连续的内存空间，而内存空间存储的字节共同组成了字符串，go 语言中的字符串只是一个只读的字节数组。 如果是代码中存在字符串，编译器会将其标记成只读数据 SRODATA，以下代码，包含了一个字符串，当被编译成汇编语言时，就能看到 hello 字符串">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-04-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-04-10T15:57:16.973Z">
+<meta property="article:author" content="天通苑废物">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>go 字符串源码分析 · 不想被看到</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >慢慢来吧</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">go 字符串源码分析</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>慢慢来吧</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            go 字符串源码分析
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Golang">Golang</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.8k</span>阅读时长: <span class="post-count reading-time">12 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2021/04/05</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTA1IiBoZWlnaHQ9IjEwNSIgdmlld0JveD0iMCAwIDEwNSAxMDUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iI2NjYyI+DQogICAgPGNpcmNsZSBjeD0iMTIuNSIgY3k9IjEyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iMHMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjEyLjUiIGN5PSI1Mi41IiByPSIxMi41IiBmaWxsLW9wYWNpdHk9Ii41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjUwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjUyLjUiIGN5PSIxMi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjE1MG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCiAgICA8Y2lyY2xlIGN4PSI1Mi41IiBjeT0iNTIuNSIgcj0iMTIuNSI+DQogICAgICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwtb3BhY2l0eSINCiAgICAgICAgIGJlZ2luPSIzMDBtcyIgZHVyPSI1MDBtcyINCiAgICAgICAgIHZhbHVlcz0iMTsuMjsxIiBjYWxjTW9kZT0ibGluZWFyIg0KICAgICAgICAgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+DQogICAgPC9jaXJjbGU+DQogICAgPGNpcmNsZSBjeD0iOTIuNSIgY3k9IjEyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iNDAwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjkyLjUiIGN5PSI1Mi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjIwMG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCiAgICA8Y2lyY2xlIGN4PSIxMi41IiBjeT0iOTIuNSIgcj0iMTIuNSI+DQogICAgICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwtb3BhY2l0eSINCiAgICAgICAgIGJlZ2luPSIzNTBtcyIgZHVyPSI1MDBtcyINCiAgICAgICAgIHZhbHVlcz0iMTsuMjsxIiBjYWxjTW9kZT0ibGluZWFyIg0KICAgICAgICAgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+DQogICAgPC9jaXJjbGU+DQogICAgPGNpcmNsZSBjeD0iNTIuNSIgY3k9IjkyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iMjUwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjkyLjUiIGN5PSI5Mi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjEwMG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCjwvc3ZnPg0K" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>字符串是 go 语言的基础数据类型，字符串实际上是一片连续的内存空间，我们也可以将它理解成一个由字符组成的数组。</p>
+<p>字符串是由字符组成的数组，数组会占用一片连续的内存空间，而内存空间存储的字节共同组成了字符串，go 语言中的字符串只是一个只读的字节数组。</p>
+<p>如果是代码中存在字符串，编译器会将其标记成只读数据 SRODATA，以下代码，包含了一个字符串，当被编译成汇编语言时，就能看到 hello 字符串有一个 SRODATA 的标记。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ cat main.go</span><br><span class="line">package main</span><br><span class="line"></span><br><span class="line">func <span class="function"><span class="title">main</span></span>() {</span><br><span class="line">	str := <span class="string">"hello"</span></span><br><span class="line">	println([]byte(str))</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">$ GOOS=linux GOARCH=amd64 go tool compile -S main.go</span><br><span class="line">...</span><br><span class="line">go.string.<span class="string">"hello"</span> SRODATA dupok size=5</span><br><span class="line">	0x0000 68 65 6c 6c 6f                                   hello</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+<p>只读，只意味着字符串会分配到只读的内存空间，但 go 语言只是不支持直接修改 string 类型变量的内存空间，但可以通过在 string 和 [] byte 类型之间的转换，来实现修改：</p>
+<ol>
+<li>先将这段内存拷贝到堆或栈上</li>
+<li>将变量的类型转换成 [] byte 后并修改字节数据</li>
+<li>将修改后的字节数组转换回 string</li>
+</ol>
+<p>go 语言的字符串的数据结构其实很简单，在运行时是使用 StringHeader 表示</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// StringHeader is the runtime representation of a string.</span></span><br><span class="line"><span class="comment">// It cannot be used safely or portably and its representation may</span></span><br><span class="line"><span class="comment">// change in a later release.</span></span><br><span class="line"><span class="comment">// Moreover, the Data field is not sufficient to guarantee the data</span></span><br><span class="line"><span class="comment">// it references will not be garbage collected, so programs must keep</span></span><br><span class="line"><span class="comment">// a separate, correctly typed pointer to the underlying data.</span></span><br><span class="line"><span class="keyword">type</span> StringHeader <span class="keyword">struct</span> {</span><br><span class="line">	Data <span class="keyword">uintptr</span></span><br><span class="line">	Len  <span class="keyword">int</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>与切片相比，字符串只是少了一个表示容量的 cap 字段，也正是因为这个相似，所以经常说字符串是一个只读的切片类型</p>
+<p>因为字符串作为只读的类型，我们不会直接向字符串追加元素，不会改变它本身的内存空间，所有在字符串的 写入操作都是通过拷贝实现的。</p>
+<p>解析器会在词法分析阶段解析字符串，会对源文件中的字符串进行切片和分组，将原有无意义的字符流转换成 token 序列，我们可以使用两种字面量的方式在 go 语言中声明字符串，双引号和反引号</p>
+<p>解析字符串使用的扫描器 src\cmd\compile\internal\syntax\scanner.go 会将输入的字符串转换成 Token 流，这个文件的 stdString 方法是用来解析使用双引号的标准字符串：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setLit sets the scanner state for a recognized _Literal token.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *scanner)</span> <span class="title">setLit</span><span class="params">(kind LitKind, ok <span class="keyword">bool</span>)</span></span> {</span><br><span class="line">	s.nlsemi = <span class="literal">true</span></span><br><span class="line">	s.tok = _Literal</span><br><span class="line">	s.lit = <span class="keyword">string</span>(s.segment())</span><br><span class="line">	s.bad = !ok</span><br><span class="line">	s.kind = kind</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *scanner)</span> <span class="title">stdString</span><span class="params">()</span></span> {</span><br><span class="line">	ok := <span class="literal">true</span></span><br><span class="line">	s.nextch()</span><br><span class="line">	<span class="keyword">for</span> {</span><br><span class="line">		<span class="keyword">if</span> s.ch == <span class="string">'"'</span> {</span><br><span class="line">			s.nextch()</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">if</span> s.ch == <span class="string">'\\'</span> {</span><br><span class="line">			s.nextch()</span><br><span class="line">			<span class="keyword">if</span> !s.escape(<span class="string">'"'</span>) {</span><br><span class="line">				ok = <span class="literal">false</span></span><br><span class="line">			}</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">if</span> s.ch == <span class="string">'\n'</span> {</span><br><span class="line">			s.errorf(<span class="string">"newline in string"</span>)</span><br><span class="line">			ok = <span class="literal">false</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">if</span> s.ch &lt; <span class="number">0</span> {</span><br><span class="line">			s.errorAtf(<span class="number">0</span>, <span class="string">"string not terminated"</span>)</span><br><span class="line">			ok = <span class="literal">false</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		}</span><br><span class="line">		s.nextch()</span><br><span class="line">	}</span><br><span class="line">	s.setLit(StringLit, ok)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>从这个方法可以看出 go 处理标准字符串的逻辑</p>
+<ol>
+<li>使用双引号表示开头和结尾；</li>
+<li>需要使用反斜杠 \ 来逃逸双引号；</li>
+<li>不能出现如下所示的隐式换行 \n；</li>
+</ol>
+<p>使用反引号声明的原始字符串的解析规则就很简单了，src\cmd\compile\internal\syntax\scanner.go 的 rawString 函数会将非反引号的所有字符都划分到当前字符串的范围中，所以我们可以使用它支持复杂的多行字符串：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setLit sets the scanner state for a recognized _Literal token.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *scanner)</span> <span class="title">setLit</span><span class="params">(kind LitKind, ok <span class="keyword">bool</span>)</span></span> {</span><br><span class="line">	s.nlsemi = <span class="literal">true</span></span><br><span class="line">	s.tok = _Literal</span><br><span class="line">	s.lit = <span class="keyword">string</span>(s.segment())</span><br><span class="line">	s.bad = !ok</span><br><span class="line">	s.kind = kind</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *scanner)</span> <span class="title">rawString</span><span class="params">()</span></span> {</span><br><span class="line">	ok := <span class="literal">true</span></span><br><span class="line">	s.nextch()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> {</span><br><span class="line">		<span class="keyword">if</span> s.ch == <span class="string">'`'</span> {</span><br><span class="line">			s.nextch()</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">if</span> s.ch &lt; <span class="number">0</span> {</span><br><span class="line">			s.errorAtf(<span class="number">0</span>, <span class="string">"string not terminated"</span>)</span><br><span class="line">			ok = <span class="literal">false</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		}</span><br><span class="line">		s.nextch()</span><br><span class="line">	}</span><br><span class="line">	<span class="comment">// We leave CRs in the string since they are part of the</span></span><br><span class="line">	<span class="comment">// literal (even though they are not part of the literal</span></span><br><span class="line">	<span class="comment">// value).</span></span><br><span class="line"></span><br><span class="line">	s.setLit(StringLit, ok)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>可见，无论是标准字符串还是原始字符串都会被标记成 StringLit 并传递到语法分析阶段，在语法阶段，与字符串相关的表达式会由 src\cmd\compile\internal\gc\noder.go  的 basicLit 方法处理：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *noder)</span> <span class="title">basicLit</span><span class="params">(lit *syntax.BasicLit)</span> <span class="title">Val</span></span> {</span><br><span class="line">	<span class="comment">// We don't use the errors of the conversion routines to determine</span></span><br><span class="line">	<span class="comment">// if a literal string is valid because the conversion routines may</span></span><br><span class="line">	<span class="comment">// accept a wider syntax than the language permits. Rely on lit.Bad</span></span><br><span class="line">	<span class="comment">// instead.</span></span><br><span class="line">	<span class="keyword">switch</span> s := lit.Value; lit.Kind {</span><br><span class="line">	<span class="keyword">case</span> syntax.StringLit:</span><br><span class="line">		<span class="keyword">var</span> x <span class="keyword">string</span></span><br><span class="line">		<span class="keyword">if</span> !lit.Bad {</span><br><span class="line">			<span class="keyword">if</span> <span class="built_in">len</span>(s) &gt; <span class="number">0</span> &amp;&amp; s[<span class="number">0</span>] == <span class="string">'`'</span> {</span><br><span class="line">				<span class="comment">// strip carriage returns from raw string</span></span><br><span class="line">				s = strings.Replace(s, <span class="string">"\r"</span>, <span class="string">""</span>, <span class="number">-1</span>)</span><br><span class="line">			}</span><br><span class="line">			x, _ = strconv.Unquote(s)</span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">return</span> Val{U: x}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>无论是 import 语句中包的路径，结构体的字段标签还是表达式中的字符串，都会使用这个方法，将原生字符串中最后的换行符删除并对字符串 Token 进行 Unquote，即去掉字符串两边的引号等无关的干扰，还原其本来的面目。</p>
+<p>strconv.Unquote 处理了很多边界条件导致实现很复杂，不展开了</p>
+<p>go 语言的拼接字符串会使用 + 号，编译器会将该符号对应的 OADD 节点转换成 OADDSTR 类型的节点，随后在 src\cmd\compile\internal\gc\walk.go 中调用 src\cmd\compile\internal\gc\walk.go 的 addstr 函数生成用于拼接字符串的代码：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">walkexpr</span><span class="params">(n *Node, init *Nodes)</span> *<span class="title">Node</span></span> {</span><br><span class="line">	<span class="keyword">switch</span> n.Op {</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">case</span> OADDSTR:</span><br><span class="line">		n = addstr(n, init)</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>addstr 能帮助我们在编译期间选择合适的函数对字符串进行拼接，该函数会根据带拼接的字符串数量选择不同的逻辑：</p>
+<p>如果小于等于 5 个，那么会调用 concatstring {2,3,4,5} 等一系列函数。<br>如果超过 5 个，那么会选择 runtime.concatstrings 传入一个数组切片</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addstr</span><span class="params">(n *Node, init *Nodes)</span> *<span class="title">Node</span></span> {</span><br><span class="line">	<span class="comment">// order.expr rewrote OADDSTR to have a list of strings.</span></span><br><span class="line">	c := n.List.Len()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> c &lt; <span class="number">2</span> {</span><br><span class="line">		Fatalf(<span class="string">"addstr count %d too small"</span>, c)</span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	buf := nodnil()</span><br><span class="line">	<span class="keyword">if</span> n.Esc == EscNone {</span><br><span class="line">		sz := <span class="keyword">int64</span>(<span class="number">0</span>)</span><br><span class="line">		<span class="keyword">for</span> _, n1 := <span class="keyword">range</span> n.List.Slice() {</span><br><span class="line">			<span class="keyword">if</span> n1.Op == OLITERAL {</span><br><span class="line">				sz += <span class="keyword">int64</span>(<span class="built_in">len</span>(strlit(n1)))</span><br><span class="line">			}</span><br><span class="line">		}</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Don't allocate the buffer if the result won't fit.</span></span><br><span class="line">		<span class="keyword">if</span> sz &lt; tmpstringbufsize {</span><br><span class="line">			<span class="comment">// Create temporary buffer for result string on stack.</span></span><br><span class="line">			t := types.NewArray(types.Types[TUINT8], tmpstringbufsize)</span><br><span class="line">			buf = nod(OADDR, temp(t), <span class="literal">nil</span>)</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	<span class="comment">// build list of string arguments</span></span><br><span class="line">	args := []*Node{buf}</span><br><span class="line">	<span class="keyword">for</span> _, n2 := <span class="keyword">range</span> n.List.Slice() {</span><br><span class="line">		args = <span class="built_in">append</span>(args, conv(n2, types.Types[TSTRING]))</span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> fn <span class="keyword">string</span></span><br><span class="line">	<span class="keyword">if</span> c &lt;= <span class="number">5</span> {</span><br><span class="line">		<span class="comment">// small numbers of strings use direct runtime helpers.</span></span><br><span class="line">		<span class="comment">// note: order.expr knows this cutoff too.</span></span><br><span class="line">		fn = fmt.Sprintf(<span class="string">"concatstring%d"</span>, c)</span><br><span class="line">	} <span class="keyword">else</span> {</span><br><span class="line">		<span class="comment">// large numbers of strings are passed to the runtime as a slice.</span></span><br><span class="line">		fn = <span class="string">"concatstrings"</span></span><br><span class="line"></span><br><span class="line">		t := types.NewSlice(types.Types[TSTRING])</span><br><span class="line">		slice := nod(OCOMPLIT, <span class="literal">nil</span>, typenod(t))</span><br><span class="line">		<span class="keyword">if</span> prealloc[n] != <span class="literal">nil</span> {</span><br><span class="line">			prealloc[slice] = prealloc[n]</span><br><span class="line">		}</span><br><span class="line">		slice.List.Set(args[<span class="number">1</span>:]) <span class="comment">// skip buf arg</span></span><br><span class="line">		args = []*Node{buf, slice}</span><br><span class="line">		slice.Esc = EscNone</span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	cat := syslook(fn)</span><br><span class="line">	r := nod(OCALL, cat, <span class="literal">nil</span>)</span><br><span class="line">	r.List.Set(args)</span><br><span class="line">	r = typecheck(r, ctxExpr)</span><br><span class="line">	r = walkexpr(r, init)</span><br><span class="line">	r.Type = n.Type</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> r</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>其实无论使用 concatstring {2,3,4,5} 中的哪一个，最终都会调用 runtime.concatstrings，它会先对遍历传入的切片参数，再过滤空字符串，并计算拼接后字符串的长度。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// concatstrings implements a Go string concatenation x+y+z+...</span></span><br><span class="line"><span class="comment">// The operands are passed in the slice a.</span></span><br><span class="line"><span class="comment">// If buf != nil, the compiler has determined that the result does not</span></span><br><span class="line"><span class="comment">// escape the calling function, so the string data can be stored in buf</span></span><br><span class="line"><span class="comment">// if small enough.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">concatstrings</span><span class="params">(buf *tmpBuf, a []<span class="keyword">string</span>)</span> <span class="title">string</span></span> {</span><br><span class="line">	idx := <span class="number">0</span></span><br><span class="line">	l := <span class="number">0</span></span><br><span class="line">	count := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i, x := <span class="keyword">range</span> a {</span><br><span class="line">		n := <span class="built_in">len</span>(x)</span><br><span class="line">		<span class="keyword">if</span> n == <span class="number">0</span> {</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		}</span><br><span class="line">		<span class="keyword">if</span> l+n &lt; l {</span><br><span class="line">			throw(<span class="string">"string concatenation too long"</span>)</span><br><span class="line">		}</span><br><span class="line">		l += n</span><br><span class="line">		count++</span><br><span class="line">		idx = i</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">if</span> count == <span class="number">0</span> {</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span></span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	<span class="comment">// If there is just one string and either it is not on the stack</span></span><br><span class="line">	<span class="comment">// or our result does not escape the calling frame (buf != nil),</span></span><br><span class="line">	<span class="comment">// then we can return that string directly.</span></span><br><span class="line">	<span class="keyword">if</span> count == <span class="number">1</span> &amp;&amp; (buf != <span class="literal">nil</span> || !stringDataOnStack(a[idx])) {</span><br><span class="line">		<span class="keyword">return</span> a[idx]</span><br><span class="line">	}</span><br><span class="line">	s, b := rawstringtmp(buf, l)</span><br><span class="line">	<span class="keyword">for</span> _, x := <span class="keyword">range</span> a {</span><br><span class="line">		<span class="built_in">copy</span>(b, x)</span><br><span class="line">		b = b[<span class="built_in">len</span>(x):]</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">return</span> s</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>如果非空字符串的数量为 1，并且当前字符串不在栈上，就可以直接返回该字符串，不需要再做出额外的动作</p>
+<p>但是正常的情况下，运行时会调用 copy 将输入的多个字符串拷贝到目标字符串所在的内存空间，新的字符串是一片新的内存空间，与原来的字符串没有任何关联，一旦需要拼接的字符串非常大，拷贝带来的性能损失是无法忽略的。</p>
+<p>类型转换</p>
+<p>当我们使用 go 语言解析和序列化 JSON 等数据格式时，经常需要将数据在 string 和 [] byte 之间来回转换，类型转换的开销并没有想象中的那么小</p>
+<p>从字节数组到字符串的转换需要使用 runtime.slicebytetostring 函数，例如 string (bytes)，该函数在函数体中会先处理两种比较常见的情况，也就是长度为 0 或 1 的字节数组，这两种情况处理起来都很简单。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// slicebytetostring converts a byte slice to a string.</span></span><br><span class="line"><span class="comment">// It is inserted by the compiler into generated code.</span></span><br><span class="line"><span class="comment">// ptr is a pointer to the first element of the slice;</span></span><br><span class="line"><span class="comment">// n is the length of the slice.</span></span><br><span class="line"><span class="comment">// Buf is a fixed-size buffer for the result,</span></span><br><span class="line"><span class="comment">// it is not nil if the result does not escape.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">slicebytetostring</span><span class="params">(buf *tmpBuf, ptr *<span class="keyword">byte</span>, n <span class="keyword">int</span>)</span> <span class="params">(str <span class="keyword">string</span>)</span></span> {</span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">0</span> {</span><br><span class="line">		<span class="comment">// Turns out to be a relatively common case.</span></span><br><span class="line">		<span class="comment">// Consider that you want to parse out data between parens in "foo()bar",</span></span><br><span class="line">		<span class="comment">// you find the indices and convert the subslice to string.</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span></span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">if</span> raceenabled {</span><br><span class="line">		racereadrangepc(unsafe.Pointer(ptr),</span><br><span class="line">			<span class="keyword">uintptr</span>(n),</span><br><span class="line">			getcallerpc(),</span><br><span class="line">			funcPC(slicebytetostring))</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">if</span> msanenabled {</span><br><span class="line">		msanread(unsafe.Pointer(ptr), <span class="keyword">uintptr</span>(n))</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">1</span> {</span><br><span class="line">		p := unsafe.Pointer(&amp;staticuint64s[*ptr])</span><br><span class="line">		<span class="keyword">if</span> sys.BigEndian {</span><br><span class="line">			p = add(p, <span class="number">7</span>)</span><br><span class="line">		}</span><br><span class="line">		stringStructOf(&amp;str).str = p</span><br><span class="line">		stringStructOf(&amp;str).<span class="built_in">len</span> = <span class="number">1</span></span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> p unsafe.Pointer</span><br><span class="line">	<span class="keyword">if</span> buf != <span class="literal">nil</span> &amp;&amp; n &lt;= <span class="built_in">len</span>(buf) {</span><br><span class="line">		p = unsafe.Pointer(buf)</span><br><span class="line">	} <span class="keyword">else</span> {</span><br><span class="line">		p = mallocgc(<span class="keyword">uintptr</span>(n), <span class="literal">nil</span>, <span class="literal">false</span>)</span><br><span class="line">	}</span><br><span class="line">	stringStructOf(&amp;str).str = p</span><br><span class="line">	stringStructOf(&amp;str).<span class="built_in">len</span> = n</span><br><span class="line">	memmove(p, unsafe.Pointer(ptr), <span class="keyword">uintptr</span>(n))</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>处理过后，会根据传入的缓冲区大小，决定是否需要为新字符串分配一片内存空间，stringStructOf 会将传入的字符串指针转换成 stringStruct 结构体指针，然后设置 stringStruct 结构体持有的 str 字符串指针和 len 长度，最后通过 memmove 将原 [] byte 中的字节全部复制到新的内存空间中。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stringStructOf</span><span class="params">(sp *<span class="keyword">string</span>)</span> *<span class="title">stringStruct</span></span> {</span><br><span class="line">	<span class="keyword">return</span> (*stringStruct)(unsafe.Pointer(sp))</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> stringStruct <span class="keyword">struct</span> {</span><br><span class="line">	str unsafe.Pointer</span><br><span class="line">	<span class="built_in">len</span> <span class="keyword">int</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>当我们想要将字符串转换成 [] byte 类型时，需要使用 stringtoslicebyte 函数：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stringtoslicebyte</span><span class="params">(buf *tmpBuf, s <span class="keyword">string</span>)</span> []<span class="title">byte</span></span> {</span><br><span class="line">	<span class="keyword">var</span> b []<span class="keyword">byte</span></span><br><span class="line">	<span class="keyword">if</span> buf != <span class="literal">nil</span> &amp;&amp; <span class="built_in">len</span>(s) &lt;= <span class="built_in">len</span>(buf) {</span><br><span class="line">		*buf = tmpBuf{}</span><br><span class="line">		b = buf[:<span class="built_in">len</span>(s)]</span><br><span class="line">	} <span class="keyword">else</span> {</span><br><span class="line">		b = rawbyteslice(<span class="built_in">len</span>(s))</span><br><span class="line">	}</span><br><span class="line">	<span class="built_in">copy</span>(b, s)</span><br><span class="line">	<span class="keyword">return</span> b</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// rawbyteslice allocates a new byte slice. The byte slice is not zeroed.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">rawbyteslice</span><span class="params">(size <span class="keyword">int</span>)</span> <span class="params">(b []<span class="keyword">byte</span>)</span></span> {</span><br><span class="line">	<span class="built_in">cap</span> := roundupsize(<span class="keyword">uintptr</span>(size))</span><br><span class="line">	p := mallocgc(<span class="built_in">cap</span>, <span class="literal">nil</span>, <span class="literal">false</span>)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">cap</span> != <span class="keyword">uintptr</span>(size) {</span><br><span class="line">		memclrNoHeapPointers(add(p, <span class="keyword">uintptr</span>(size)), <span class="built_in">cap</span>-<span class="keyword">uintptr</span>(size))</span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	*(*slice)(unsafe.Pointer(&amp;b)) = slice{p, size, <span class="keyword">int</span>(<span class="built_in">cap</span>)}</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>这个函数会根据是否传入缓冲区，作出不同的处理：</p>
+<ol>
+<li>当传入缓冲区时，会使用传入的缓冲区存储 [] byte</li>
+<li> 当没有传入缓冲区时，运行时会调用 runtime.rawbyteslice 创建新的字节切片并将字符串中的内容拷贝过去</li>
+</ol>
+<p>字符串和 [] byte 中内容虽然一样，但是字符串的内容是只读的，我们不能通过下标或其他形式改变其中的数据，而 [] byte 中的内容是可以读写的 <br> 不过无论从哪种类型转换到另一种，都要拷贝数据，而内存拷贝的性能损耗会随着字符串和 [] byte 长度的增长而增长</p>
+<p>字符串是 Go 语言中比较简单的一种数据结构，我们仔细分析了字符串与 [] byte 类型的关系，从词法分析阶段理解字符串是如何被解析的，作为只读的数据类型，我们无法改变其本身的结构，但是在做拼接和类型转换等操作时一定要注意性能的损耗，遇到需要极致性能的场景一定要尽量减少类型转换的次数。</p>
+
+    </article>
+    <!-- license  -->
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAaxios%E6%BA%90%E7%A0%81%EF%BC%88v0.23.0%EF%BC%89/" title= "深入浅出 Axios 源码（v0.23.0）">
+                    <div class="nextTitle">深入浅出 Axios 源码（v0.23.0）</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/golang%E7%9A%84for%20range/" title= "for range 用法和实现原理">
+                    <div class="prevTitle">for range 用法和实现原理</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:252964824@qq.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">归档</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">标签</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">分类</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        篇数 : 9
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2021 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAaxios%E6%BA%90%E7%A0%81%EF%BC%88v0.23.0%EF%BC%89/" >深入浅出 Axios 源码（v0.23.0）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/go%E5%AD%97%E7%AC%A6%E4%B8%B2/" >go 字符串源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/golang%E7%9A%84for%20range/" >for range 用法和实现原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/28</span><a class="archive-post-title" href= "/slice%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" >slice 切片实现原理（源码分析）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/27</span><a class="archive-post-title" href= "/%E5%85%B3%E4%BA%8E%20Go%20%E6%95%B0%E7%BB%84%E7%9A%84%E6%80%BB%E7%BB%93/" >Go 数组的总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/Go%E6%A0%87%E5%87%86%E5%BA%93log%E7%9A%84%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" >Go 标准库 log 主要源码分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/06</span><a class="archive-post-title" href= "/cache2go%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" >cache2go 源码解析</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/Go-channel-%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" >channel 原理解析 - 读源码</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/16</span><a class="archive-post-title" href= "/Golang%E7%AC%94%E8%AF%95%E9%9D%A2%E8%AF%95%E9%A2%98/" >Golang 笔试面试题</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Golang"><span class="iconfont-archer">&#xe606;</span>Golang</span>
+    
+        <span class="sidebar-tag-name" data-tags="源码"><span class="iconfont-archer">&#xe606;</span>源码</span>
+    
+        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+    
+        <span class="sidebar-tag-name" data-tags="源码分析"><span class="iconfont-archer">&#xe606;</span>源码分析</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Golang"><span class="iconfont-archer">&#xe60a;</span>Golang</span>
+    
+        <span class="sidebar-category-name" data-categories="面试"><span class="iconfont-archer">&#xe60a;</span>面试</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "天通苑废物"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

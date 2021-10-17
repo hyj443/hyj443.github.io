@@ -29,7 +29,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://tva2.sinaimg.cn/large/ad5fbf65ly1gjr5wkuzduj20mr0ra15z.jpg">
 <meta property="article:published_time" content="2020-01-15T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-01-19T14:33:49.657Z">
+<meta property="article:modified_time" content="2021-04-10T16:05:38.679Z">
 <meta property="article:author" content="天通苑废物">
 <meta property="article:tag" content="Golang">
 <meta name="twitter:card" content="summary">
@@ -434,11 +434,11 @@ height:50vh;
 <li> Go 有异常类型吗<ol>
 <li>错误和异常是不同的，错误是可能出现问题的地方出现了问题，比如打开一个文件失败，意料之中的错误；异常是指不应该出现问题的地方出现问题，意料之外。</li>
 <li>go 的 error 接口类型作为错误处理的标准模式，如果函数要返回错误，则返回值类型列表中肯定包含 error 类型，error 接口有一个签名为 <code>Error() string</code> 的方法，所有实现了 error 接口的类型都可以当做一个错误类型，Error () 方法返回出错误的具体描述。我们可以用 errors.New 函数创建一个 error。也可以使用 error 接口自定义一个 Error 方法，返回自定义的错误信息。</li>
-<li>至于异常，go 没有设计像 Java 或 .NET 中的异常处理机制，虽然可以用 defer、panic、recover 模拟，但是官方不推荐，因为 go 设计者认为其他语言的异常机制被过度使用，上层逻辑需要为发生异常付出太多资源，同时，如果开发者觉得错误处理很麻烦，程序就容易在不可预知的时刻崩溃。go 希望开发者重视错误处理，正确处理每一个可能发生错误的函数</li>
-<li> go 的类型系统会在编译时捕获很多错误，但有的错误只能在运行时检查，如数组访问越界、引用空指针等，这些运行时错误会引发宕机（panic）</li>
-<li>宕机发生时，程序中断运行，并立即执行 defer 被延迟的函数，随后程序宕机，并输出日志信息，日志信息包括 panic value 和函数调用的堆栈跟踪信息，panic value 通常是某种错误信息。</li>
+<li>至于异常，go 没有设计像 Java 的异常处理机制，虽然可以用 defer、panic、recover 模拟，但是官方不推荐，因为 go 设计者认为其他语言的异常机制被过度使用，上层逻辑需要为发生异常付出太多资源，同时，如果开发者觉得错误处理很麻烦，程序就容易在不可预知的时刻崩溃。go 希望开发者重视错误处理，正确处理每一个可能发生错误的函数</li>
+<li> go 的类型系统会在编译时捕获很多错误，但有的错误只能在运行时检查，如数组访问越界、引用空指针等，这些运行时错误会引发 panic</li>
+<li> 宕机发生时，程序中断运行，并立即执行 defer 被延迟的函数，随后程序宕机，并输出日志信息，日志信息包括 panic value 和函数调用的堆栈跟踪信息，panic value 通常是某种错误信息。</li>
 <li>虽然 go 的 panic 机制类似于其他语言的异常，但 panic 的使用场景有一点不同，因为它会让程序宕机，所以一般用于严重错误，表明代码可能存在漏洞，对于大部分意料之中的错误，应使用 go 的错误机制，而不是 panic</li>
-<li> 开发者可以在程序中手动触发 panic，让开发者可以及时发现漏洞，宕机发生时，后面的代码不再执行，但在 panic () 函数前面已经运行过的 defer 语句依然会在宕机发生时执行，这个特性可以用来在宕机发生前，进行宕机信息处理</li>
+<li> 开发者可以在程序中手动触发 panic，让开发者可以及时发现漏洞，宕机发生时，后面的代码不再执行，但在 panic () 函数前面已经执行过的 defer 语句依然会在宕机发生时执行，这个特性可以用来在宕机发生前，进行宕机信息处理</li>
 <li> recover 是内建函数，可以让进入 panic 的 goroutine 恢复过来，recover 仅在 defer 中有效，别的地方调用它会返回 nil 并且没有效果。如果当前 goroutine 陷入恐慌，调用 recover 可以捕获到 panic 的输入值，并且恢复正常的执行。</li>
 <li> 通常来说，不应该对进入 panic 的程序做什么处理，但有时候想从 panic 中恢复，至少可以在程序崩溃前做一些事，其他语言，底层抛出异常，上层逻辑通过 try/catch 机制捕获异常，捕获不到就宕机，捕获到了程序可以继续运行</li>
 <li>有 panic 没 recover，程序宕机，有 panic 有 recover，程序不会宕机，执行完 defer 后，从宕机点退出当前函数后继续执行</li>
@@ -889,9 +889,33 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        篇数 : 7
+        篇数 : 9
         </div>
         <!-- search  -->
         
@@ -904,6 +928,16 @@ top:50vh;
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAaxios%E6%BA%90%E7%A0%81%EF%BC%88v0.23.0%EF%BC%89/" >深入浅出 Axios 源码（v0.23.0）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/go%E5%AD%97%E7%AC%A6%E4%B8%B2/" >go 字符串源码分析</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -958,6 +992,10 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="源码"><span class="iconfont-archer">&#xe606;</span>源码</span>
     
+        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+    
+        <span class="sidebar-tag-name" data-tags="源码分析"><span class="iconfont-archer">&#xe606;</span>源码分析</span>
+    
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
@@ -994,6 +1032,8 @@ jsonContent:
         <span class="sidebar-category-name" data-categories="Golang"><span class="iconfont-archer">&#xe60a;</span>Golang</span>
     
         <span class="sidebar-category-name" data-categories="面试"><span class="iconfont-archer">&#xe60a;</span>面试</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

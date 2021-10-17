@@ -28,7 +28,7 @@
 <meta property="og:description" content="文章内容可能较长，但基本都用大白话和短句，增加可读性。希望我和你都有所收获。  Go 并发的原则Go 并发的哲学是：不通过共享内存来进行协程之间的通信，而是通过通信来实现共享内存。 先说前者，比如有一块共享的数据，协程 a 和 b 都要读写它，可通过加锁，二者来抢占。但这不可控，无法知道某一时刻轮到谁了，而且其他协程也能访问到它，存在一定的安全问题，如果只想利用这块共享的内存区域进行信息交换，还">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-11-30T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-01-10T19:11:10.750Z">
+<meta property="article:modified_time" content="2021-07-18T11:41:21.097Z">
 <meta property="article:author" content="天通苑废物">
 <meta property="article:tag" content="Golang">
 <meta property="article:tag" content="源码">
@@ -429,7 +429,7 @@ height:50vh;
 <h3 id="channel- 的数据结构"><a href="#channel- 的数据结构" class="headerlink" title="channel 的数据结构"></a>channel 的数据结构</h3><blockquote>
 <p> 源码版本为 go 1.15.6</p>
 </blockquote>
-<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> hchan <span class="keyword">struct</span> {</span><br><span class="line">    qcount   <span class="keyword">uint</span>   <span class="comment">// 缓冲队列中的目前元素个数</span></span><br><span class="line">    dataqsiz <span class="keyword">uint</span>   <span class="comment">// 缓冲队列的容量</span></span><br><span class="line">    buf      unsafe.Pointer <span class="comment">// 指向管缓冲队列（数组）的指针</span></span><br><span class="line">    elemsize <span class="keyword">uint16</span> <span class="comment">// 元素占用字节的大小</span></span><br><span class="line">    closed   <span class="keyword">uint32</span> <span class="comment">// 管道是否关闭，非 0 表示已经关闭</span></span><br><span class="line">    elemtype *_type <span class="comment">// 队列中元素的类型</span></span><br><span class="line">    sendx    <span class="keyword">uint</span>   <span class="comment">// 向管道发送数据，会发送到的缓冲队列中的索引</span></span><br><span class="line">    recvx    <span class="keyword">uint</span>   <span class="comment">// 从管道接收数据，接收的数据对应的缓冲队列中的索引</span></span><br><span class="line">    recvq    waitq  <span class="comment">// 等待接收管道数据的 goroutine 的队列</span></span><br><span class="line">    sendq    waitq  <span class="comment">// 等待发送数据给管道的 goroutine 的队列</span></span><br><span class="line">    </span><br><span class="line">    lock mutex      <span class="comment">// 锁，保护 hchan 的每个字段，还有一些 sudogs 的字段</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> hchan <span class="keyword">struct</span> {</span><br><span class="line">    qcount   <span class="keyword">uint</span>   <span class="comment">// 缓冲队列中的目前元素个数</span></span><br><span class="line">    dataqsiz <span class="keyword">uint</span>   <span class="comment">// 缓冲队列的容量</span></span><br><span class="line">    buf      unsafe.Pointer <span class="comment">// 指向缓冲队列的指针</span></span><br><span class="line">    elemsize <span class="keyword">uint16</span> <span class="comment">// 元素占用字节的大小</span></span><br><span class="line">    closed   <span class="keyword">uint32</span> <span class="comment">// 管道是否关闭，非 0 表示已经关闭</span></span><br><span class="line">    elemtype *_type <span class="comment">// 队列中元素的类型</span></span><br><span class="line">    sendx    <span class="keyword">uint</span>   <span class="comment">// 向管道发送数据，写入时存放到缓冲队列中的索引</span></span><br><span class="line">    recvx    <span class="keyword">uint</span>   <span class="comment">// 从管道接收数据，接收的数据对应的缓冲队列中的索引</span></span><br><span class="line">    recvq    waitq  <span class="comment">// 等待接收管道数据的 goroutine 的队列</span></span><br><span class="line">    sendq    waitq  <span class="comment">// 等待发送数据给管道的 goroutine 的队列</span></span><br><span class="line">    </span><br><span class="line">    lock mutex      <span class="comment">// 锁，保护 hchan 的每个字段，还有一些 sudogs 的字段</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
 <p>看几个重点的字段：</p>
 <p><code>buf</code>，是指向一个循环缓冲队列的指针。<br><code>sendx</code>，表示缓冲队列中当前发送元素的位置索引<br><code>recvx</code>，表示缓冲队列中当前接收元素的位置索引<br><code>recvq</code>，表示等待接收管道中的数据的 goroutine 的队列，即，保存了阻塞中的接收方<br><code>sendq</code>，表示等待发送数据给管道的 goroutine 的队列，即，保存了阻塞中的发送方</p>
 <p>下面是 sendq 和 recvq 队列的实现，是一个双向链表，节点是 sudog 类型，是对处于等待的 goroutine 的封装，sudog 有前驱指针和后继指针，构成双向链表。</p>
@@ -792,9 +792,33 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        篇数 : 7
+        篇数 : 9
         </div>
         <!-- search  -->
         
@@ -807,6 +831,16 @@ top:50vh;
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAaxios%E6%BA%90%E7%A0%81%EF%BC%88v0.23.0%EF%BC%89/" >深入浅出 Axios 源码（v0.23.0）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/go%E5%AD%97%E7%AC%A6%E4%B8%B2/" >go 字符串源码分析</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -861,6 +895,10 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="源码"><span class="iconfont-archer">&#xe606;</span>源码</span>
     
+        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
+    
+        <span class="sidebar-tag-name" data-tags="源码分析"><span class="iconfont-archer">&#xe606;</span>源码分析</span>
+    
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
@@ -897,6 +935,8 @@ jsonContent:
         <span class="sidebar-category-name" data-categories="Golang"><span class="iconfont-archer">&#xe60a;</span>Golang</span>
     
         <span class="sidebar-category-name" data-categories="面试"><span class="iconfont-archer">&#xe60a;</span>面试</span>
+    
+        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
