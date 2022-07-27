@@ -20,17 +20,22 @@
     <meta name="keywords" content="golang,架构">
     
     <meta name="description" content="">
-    <meta property="og:type" content="website">
-<meta property="og:title" content="逃离天通苑">
-<meta property="og:url" content="https://hyj443.github.io/tags/JavaScript/index.html">
+    <meta name="description" content="介绍 io.Readerio.Reader 是一个 interface 类型，任何实现了 Read () 的对象都可以作为 io.Reader 使用 123type Reader interface {  Read(p []byte) (n int, err error)} Read 将 len (p) 个字节读取到 p 中。它返回读取的字节数 n（0 &lt;&#x3D; n &lt;&#x3D; len (p)）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="认识 io.Reader">
+<meta property="og:url" content="https://hyj443.github.io/%E8%AE%A4%E8%AF%86io.Reader/index.html">
 <meta property="og:site_name" content="逃离天通苑">
+<meta property="og:description" content="介绍 io.Readerio.Reader 是一个 interface 类型，任何实现了 Read () 的对象都可以作为 io.Reader 使用 123type Reader interface {  Read(p []byte) (n int, err error)} Read 将 len (p) 个字节读取到 p 中。它返回读取的字节数 n（0 &lt;&#x3D; n &lt;&#x3D; len (p)）">
 <meta property="og:locale">
+<meta property="article:published_time" content="2022-01-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-03-12T13:43:11.162Z">
 <meta property="article:author" content="天通苑废物">
+<meta property="article:tag" content="golang">
 <meta name="twitter:card" content="summary">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     
-    <title>不想被看到</title>
+    <title>认识 io.Reader · 不想被看到</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -211,12 +216,23 @@
 <meta name="generator" content="Hexo 5.3.0"></head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >慢慢来吧</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">认识 io.Reader</a>
+            </div>
+    </div>
     
     <a class="home-link" href=/>慢慢来吧</a>
 </header>
@@ -228,24 +244,74 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            认识 io.Reader
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "golang">golang</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.2k</span>阅读时长: <span class="post-count reading-time">5 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2022/01/23</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -346,41 +412,91 @@
 </script>        
         <img class="loading" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTA1IiBoZWlnaHQ9IjEwNSIgdmlld0JveD0iMCAwIDEwNSAxMDUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iI2NjYyI+DQogICAgPGNpcmNsZSBjeD0iMTIuNSIgY3k9IjEyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iMHMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjEyLjUiIGN5PSI1Mi41IiByPSIxMi41IiBmaWxsLW9wYWNpdHk9Ii41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjUwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjUyLjUiIGN5PSIxMi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjE1MG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCiAgICA8Y2lyY2xlIGN4PSI1Mi41IiBjeT0iNTIuNSIgcj0iMTIuNSI+DQogICAgICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwtb3BhY2l0eSINCiAgICAgICAgIGJlZ2luPSIzMDBtcyIgZHVyPSI1MDBtcyINCiAgICAgICAgIHZhbHVlcz0iMTsuMjsxIiBjYWxjTW9kZT0ibGluZWFyIg0KICAgICAgICAgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+DQogICAgPC9jaXJjbGU+DQogICAgPGNpcmNsZSBjeD0iOTIuNSIgY3k9IjEyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iNDAwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjkyLjUiIGN5PSI1Mi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjIwMG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCiAgICA8Y2lyY2xlIGN4PSIxMi41IiBjeT0iOTIuNSIgcj0iMTIuNSI+DQogICAgICAgIDxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwtb3BhY2l0eSINCiAgICAgICAgIGJlZ2luPSIzNTBtcyIgZHVyPSI1MDBtcyINCiAgICAgICAgIHZhbHVlcz0iMTsuMjsxIiBjYWxjTW9kZT0ibGluZWFyIg0KICAgICAgICAgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+DQogICAgPC9jaXJjbGU+DQogICAgPGNpcmNsZSBjeD0iNTIuNSIgY3k9IjkyLjUiIHI9IjEyLjUiPg0KICAgICAgICA8YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsLW9wYWNpdHkiDQogICAgICAgICBiZWdpbj0iMjUwbXMiIGR1cj0iNTAwbXMiDQogICAgICAgICB2YWx1ZXM9IjE7LjI7MSIgY2FsY01vZGU9ImxpbmVhciINCiAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPg0KICAgIDwvY2lyY2xlPg0KICAgIDxjaXJjbGUgY3g9IjkyLjUiIGN5PSI5Mi41IiByPSIxMi41Ij4NCiAgICAgICAgPGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbC1vcGFjaXR5Ig0KICAgICAgICAgYmVnaW49IjEwMG1zIiBkdXI9IjUwMG1zIg0KICAgICAgICAgdmFsdWVzPSIxOy4yOzEiIGNhbGNNb2RlPSJsaW5lYXIiDQogICAgICAgICByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz4NCiAgICA8L2NpcmNsZT4NCjwvc3ZnPg0K" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAaxios%E6%BA%90%E7%A0%81%EF%BC%88v0.23.0%EF%BC%89/" >
-            
-                <span>深入浅出 Axios 源码（v0.23.0）</span>
-        </a>
-        <div class="abstract-content">
-            
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/10/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "JavaScript">JavaScript</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "源码分析">源码分析</a>
-    
-</div>
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="介绍 io-Reader"><a href="# 介绍 io-Reader" class="headerlink" title="介绍 io.Reader"></a>介绍 io.Reader</h2><p>io.Reader 是一个 interface 类型，任何实现了 Read () 的对象都可以作为 io.Reader 使用</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> {</span><br><span class="line">  Read(p []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>Read 将 len (p) 个字节读取到 p 中。它返回读取的字节数 n（0 &lt;= n &lt;= len (p)） 以及任何遇到的错误。即使 Read 返回的 n &lt; len (p)，它也会在调用过程中占用 len (p) 个字节作为暂存空间。若可读取的数据不到 len (p) 个字节，Read 会返回可用数据，而不是等待更多数据。</p>
+<p>GO 标准库中有很多 Reader 类型</p>
+<p>os.Open () 打开一个文件，返回一个 os.File 对象，它就是一个 Reader 类型</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> r io.Reader</span><br><span class="line">r, err := os.Open(<span class="string">"file.txt"</span>)</span><br></pre></td></tr></tbody></table></figure>
+<p>再比如，创建一个从字符串读取数据的 Reader</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> r io.Reader</span><br><span class="line">r = strings.NewReader(<span class="string">"Read will return these bytes"</span>)</span><br></pre></td></tr></tbody></table></figure>
+<p>比如 net 包里的 Conn 类型，也是一个 Reader 和 Writer，Conn 接口代表通用的面向流的网络连接</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Conn <span class="keyword">interface</span> {</span><br><span class="line">    <span class="comment">// Read 从连接中读取数据 </span></span><br><span class="line">    <span class="comment">// Read 方法可能会在超过某个固定时间限制后超时返回错误，该错误的 Timeout() 方法返回真</span></span><br><span class="line">    Read(b []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</span><br><span class="line">    Write(b []<span class="keyword">byte</span>) (n <span class="keyword">int</span>, err error)</span><br><span class="line">    Close() error</span><br><span class="line">    LocalAddr() Addr</span><br><span class="line">    RemoteAddr() Addr</span><br><span class="line">    SetDeadline(t time.Time) error</span><br><span class="line">    SetReadDeadline(t time.Time) error</span><br><span class="line">    SetWriteDeadline(t time.Time) error</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>bytes.Buffer 是实现了读写方法的可变大小的字节缓冲，它实现了 Reader 和 Writer。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 s 作为初始内容创建并初始化一个 Buffer，用于读取已存在数据</span></span><br><span class="line">buffer := bytes.NewBufferString(<span class="string">"R29waGVycyBydWxlIQ=="</span>)</span><br><span class="line">dec := base64.NewDecoder(base64.StdEncoding, buffer)</span><br><span class="line">io.Copy(os.Stdout, dec)</span><br></pre></td></tr></tbody></table></figure>
+<p>Output:<br>Gophers rule!</p>
+<p>bufio 包实现了有缓冲的 I/O，它包装一个 io.Reader 或 io.Writer 接口对象，创建一个新的同时实现该接口，且提供缓冲和一些文本 I/O 的帮助函数的对象。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewReader 创建一个具有默认大小缓冲、从 rd 读取的 *Reader。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReader</span><span class="params">(rd io.Reader)</span> *<span class="title">Reader</span></span></span><br></pre></td></tr></tbody></table></figure>
+<p>比如，创建从标准输入读取内容的 reader</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reader := bufio.NewReader(os.Stdin)</span><br></pre></td></tr></tbody></table></figure>
+<p>或者初始化一个 bytes.Buffer 对象，然后据此生成一个 bufio.Reader 对象</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">readbuffer := bytes.NewBuffer([]<span class="keyword">byte</span>(<span class="string">"input string"</span>))</span><br><span class="line">reader := bufio.NewReader(readbuffer)</span><br></pre></td></tr></tbody></table></figure>
+<p>我们列出实现了 io.Reader 或 io.Writer 接口的类型（导出的类型）</p>
+<p>os.File 同时实现了 io.Reader 和 io.Writer<br>strings.Reader 实现了 io.Reader<br>bufio.Reader/Writer 分别实现了 io.Reader 和 io.Writer<br>bytes.Buffer 同时实现了 io.Reader 和 io.Writer<br>bytes.Reader 实现了 io.Reader<br>compress/gzip.Reader/Writer 分别实现了 io.Reader 和 io.Writer<br>crypto/cipher.StreamReader/StreamWriter 分别实现了 io.Reader 和 io.Writer<br>crypto/tls.Conn 同时实现了 io.Reader 和 io.Writer<br>encoding/csv.Reader/Writer 分别实现了 io.Reader 和 io.Writer<br>mime/multipart.Part 实现了 io.Reader<br>net/conn 分别实现了 io.Reader 和 io.Writer (Conn 接口定义了 Read/Write)</p>
+<p>除此之外，io 包本身也有这两个接口的实现类型。如：</p>
+<p>实现了 Reader 的类型：LimitedReader、PipeReader、SectionReader<br>实现了 Writer 的类型：PipeWriter<br>以上类型中，常用的类型有：os.File、strings.Reader、bufio.Reader/Writer、bytes.Buffer、bytes.Reader</p>
+<h2 id="使用 Reader"><a href="# 使用 Reader" class="headerlink" title="使用 Reader"></a>使用 Reader</h2><p>直接调用 Reader 的 Read ()，来读取数据</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">256</span>)</span><br><span class="line">n, err := r.Read(p)</span><br></pre></td></tr></tbody></table></figure>
+<p>或者使用 ioutil.ReadAll 从 Reader 中读取数据</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadAll</span><span class="params">(r io.Reader)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span></span><br></pre></td></tr></tbody></table></figure>
+<p>ReadAll 从 r 读取数据直到 EOF 或遇到 error，返回读取的数据和遇到的错误。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b, err := ioutil.ReadAll(r)</span><br></pre></td></tr></tbody></table></figure>
+<p>还能使用 io.Copy () 从一个 Reader 中读取数据，并写入一个 Writer</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">n, err := io.Copy(w, r)</span><br></pre></td></tr></tbody></table></figure>
+<p>还能使用 JSON Decoder 从一个 Reader 中直接 decode 数据</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">err := json.NewDecoder(r).Decode(v)</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="设计 -Reader- 接口"><a href="# 设计 -Reader- 接口" class="headerlink" title="设计 Reader 接口"></a>设计 Reader 接口 </h3><p> 在写接口时，如果我们需要接受 [] byte 或 string 等类型的数据，我们可以把参数设置成接受 Reader 类型而不是 [] byte 或 string，这样的话，我们的接口就能变得更加通用，适用的场景也会更多。</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Reverse</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span></span><br><span class="line"><span class="comment">// 可以变成</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Reverse</span><span class="params">(r io.Reader)</span> <span class="title">io</span>.<span class="title">Reader</span></span></span><br></pre></td></tr></tbody></table></figure>
+<p>改变之后，如果想要传入 string，则可以这样：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r = Reverse(strings.NewReader(<span class="string">"Make me backwards"</span>))</span><br></pre></td></tr></tbody></table></figure>
+<p>如果别人想要传入一个文件对象：</p>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">f, err := os.Open("file.txt")</span><br><span class="line">if err != nil {</span><br><span class="line">  log.Fatalln(err)</span><br><span class="line">}</span><br><span class="line">r = Reverse(f)</span><br></pre></td></tr></tbody></table></figure>
+<p>或者，还可以传入一个 http.Request.Body</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handle</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> {</span><br><span class="line">  rev := Reverse(r.Body)</span><br><span class="line">  <span class="comment">// etc...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>再举个例子</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadFrom</span><span class="params">(reader io.Reader, num <span class="keyword">int</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> {</span><br><span class="line">    p := <span class="built_in">make</span>([]<span class="keyword">byte</span>, num)</span><br><span class="line">    n, err := reader.Read(p)</span><br><span class="line">    <span class="keyword">if</span> n &gt; <span class="number">0</span> {</span><br><span class="line">        <span class="keyword">return</span> p[:n], <span class="literal">nil</span></span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> p, err</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<p>ReadFrom 可以从任意的地方读取数据，只要来源实现了 io.Reader 接口。比如，我们可以从标准输入、文件、字符串等读取数据：</p>
+<figure class="highlight go"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从标准输入读取</span></span><br><span class="line">data, err = ReadFrom(os.Stdin, <span class="number">11</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从普通文件读取，其中 file 是 os.File 的实例</span></span><br><span class="line">data, err = ReadFrom(file, <span class="number">9</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从字符串读取</span></span><br><span class="line">data, err = ReadFrom(strings.NewReader(<span class="string">"from string"</span>), <span class="number">12</span>)</span><br></pre></td></tr></tbody></table></figure>
+<p>最后建议：</p>
+<p>在任何需要处理数据流的地方，都应该尽可能使用 Reader/Writer。</p>
+
     </article>
+    <!-- license  -->
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/go%E5%AD%97%E7%AC%A6%E4%B8%B2/" title= "go 字符串源码分析">
+                    <div class="prevTitle">go 字符串源码分析</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -454,6 +570,24 @@
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D%20io-Reader"><span class="toc-number">1.</span> <span class="toc-text">介绍 io.Reader</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%20Reader"><span class="toc-number">2.</span> <span class="toc-text">使用 Reader</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%20-Reader-%20%E6%8E%A5%E5%8F%A3"><span class="toc-number">2.1.</span> <span class="toc-text">设计 Reader 接口 </span></a></li></ol></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -573,13 +707,22 @@
     
     
     
-    <div class="archive-year"> 2021 </div>
+    <div class="archive-year"> 2022 </div>
     <ul class="year-list">
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAaxios%E6%BA%90%E7%A0%81%EF%BC%88v0.23.0%EF%BC%89/" >深入浅出 Axios 源码（v0.23.0）</a>
+            <span class="archive-post-date">01/23</span><a class="archive-post-title" href= "/%E8%AE%A4%E8%AF%86io.Reader/" >认识 io.Reader</a>
         </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2021 </div>
+    <ul class="year-list">
     
     
         <li class="archive-post-item">
@@ -639,9 +782,7 @@
     
         <span class="sidebar-tag-name" data-tags="源码"><span class="iconfont-archer">&#xe606;</span>源码</span>
     
-        <span class="sidebar-tag-name" data-tags="JavaScript"><span class="iconfont-archer">&#xe606;</span>JavaScript</span>
-    
-        <span class="sidebar-tag-name" data-tags="源码分析"><span class="iconfont-archer">&#xe606;</span>源码分析</span>
+        <span class="sidebar-tag-name" data-tags="golang"><span class="iconfont-archer">&#xe606;</span>golang</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -680,7 +821,7 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="面试"><span class="iconfont-archer">&#xe60a;</span>面试</span>
     
-        <span class="sidebar-category-name" data-categories="JavaScript"><span class="iconfont-archer">&#xe60a;</span>JavaScript</span>
+        <span class="sidebar-category-name" data-categories="golang"><span class="iconfont-archer">&#xe60a;</span>golang</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
@@ -714,6 +855,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
